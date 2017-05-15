@@ -64,6 +64,9 @@ In order to address all these objectives, this paper is organized as follows. Fi
 
 \section{MapReduce as Information Process Fusion}\label{sec:mr}
 
+
+
+
 INTRO
 
 \subsection{MR}\label{subsec:mr}
@@ -93,33 +96,54 @@ From this initial model, more recent alternative frameworks have arisen to provi
 
 \TODO
 
-\subsubsection{Hadoop}\label{subsec:hadoop}
+\subsection{Hadoop}\label{subsec:hadoop}
 
 \TODO
 
-\subsubsection{Spark}\label{subsec:spark}
+\subsection{Spark}\label{subsec:spark}
 
-Spark\cite{Zaharia12,Zaharia10} \footnote{\url{http://spark.apache.org/}} has been developed to overcome data reuse across multiple computations. It supports iterative applications, while retaining the scalability and fault tolerance of MapReduce, supporting in-memory processes. It is implemented in the functional programming language Scala and has further programming interfaces in Java, Python and the declarative query language SparkSQL.
+Apache Spark Framework~\cite{spark} was born in 2010 with the publication of Resilient Distributed Datasets (RDD) structures~\cite{zaharia12}, the key idea behind Spark. Although ASF has a close relationship with many components from Hadoop Ecosystem, Spark provides specific support for every step in the Big Data stack, such as its own processing engine, and machine learning library. 
 
-Spark rests upon two main concepts: resilient distributed datasets (RDD), which hold the data objects in memory, and transformations or actions that are performed on the datasets in parallel.
+Apache Spark~\cite{hamstra15} can be defined as a distributed computing platform which can process large volume data sets in memory with a very fast response time, thanks to its memory-intensive scheme. It was originally thought to tackle problems deemed as unsuitable for previous disk-based engines like Hadoop. Continued use of disk is replaced in Spark by memory-based operators that efficiently deal with iterative and interactive problems (prone to multiple I/O actions). 
 
-RDDs are a collection of distributed items, with read-only-mode and fault-tolerant. As stated above, these data structures allow users making intermediate results to persist in memory, as well as controlling their partitioning to optimize data placement, and also manipulating them using a rich set of operators.
+%RDD
+The heart of Spark is formed by Resilient Distributed Datasets (RDD), which transparently controls how data are distributed and transformed across the cluster. Users just need to define some high-level functions that will be applied and managed by RDDs. These elements are created whenever data are read from any source, or as a result of a transformation. RDDs consist of a collection of data partitions distributed across several data nodes. A wide range of operations are provided for transforming RDDs, such as: filtering, grouping, set operations, among others. Furthermore RDDs are also highly versatile as they allows users to customize partitioning for an optimized data placement, or to preserve data in several formats and contexts.
 
-These operators are based on coarse-grained transformations. Specifically, there are 20 transformations and 12 actions usable. The difference between the two kinds of operators is that transformations are functions to generate and manipulate RDDs out of input files or other RDDs, whereas actions can only be used on RDDs to produce a result set in the driver program or write data to the file system\cite{Zaharia12}.
+% lineage
+In Spark, fault tolerance is solved by annotating operations in a structure called lineage. Spark transformations annotated in the lineage are only performed whenever a trigger I/O operations appears in the log. In case of failure, Spark re-computes the affected brach in the lineage log. Although replication is normally skipped, Spark allows to spill data in local disk in case the memory capacity is not sufficient. 
 
-In order to manage data objects within the algorithms developed under Spark, two API are available in current version 1.6.0. On the first hand, DataFrame API, which is clearly the most stable option and therefore it offers the best performance. On the other hand, an API simply named as Dataset may be used also. However, being the most recent add to this framework, it does not yet leverage the additional information it has, and it can be slower than RDDs. It is expected to be fully developed and improved for Spark version 2.0.
+%Dataframes
+Spark developers provided another high-level abstraction, called DataFrames, which introduces the concept of formal schema in RDDs. DataFrames are distributed and structured collections of data organized by named columns. They can be seen as a table in a relational database or a dataframe in R, or Python (Pandas). As a plus, relational query plans built by DataFrames are optimized by the Spark's Catalyst optimizer throughout the previously defined schema. Also thanks to the scheme, Spark is able to understand data and remove costly Java serialization actions.
 
-It is worth to point out that Spark implements a Machine Learning library known as MLlib\footnote{\url{http://spark.apache.org/docs/latest/mllib-guide.html}}, included within the MLBase platform \cite{Kra13}. MLlib currently supports common types of machine learning problem settings, as well as associated tests and data generators. It includes binary classification, regression, clustering and collaborative filtering, as well as an underlying gradient descent optimization primitive. Finally, Mahout \cite{Owe11}, maybe the most well-known Machine Learning library for Big Data, has recently announced its migration to Spark, due to the good properties of this framework for the execution of this type of algorithms. Neither of them support any fuzzy modeling algorithm yet.
+%Datasets
+A compromise between structure awareness and the optimization benefits of Catalyst is achieved by the novel Dataset API. Datasets are strongly typed collections of objects connected to a relational schema. Among the benefits of Datasets, we can find compile-time type safety, which means applications can be sanitized before running. Furthermore, Datasets provide encoders for free to directly convert JVM objects to the binary tabular Tungsten format. These efficient in-memory format improves memory usage, and allows to directly apply operations on serialized data. Datasets are intended to be the single interface in future Spark for handling data.
 
-\subsubsection{Flink}\label{subsec:flink}
+\subsubsection{MLlib}
 
-The Flink framework\footnote{\url{http://flink.apache.org/}} has its origins in the Stratosphere project \cite{Alexandrov14,Hues12}. The main idea behind this model is the optimization of execution plans, which is based on basic technologies from relational database systems. It is written in Java, but it also supports Scala and Python languages. It avoids the use of a declarative query language with aims at simplifying the development of applications for those users with less programming experience.
 
-The Apache Flink framework currently provides 17 functions for data transformation, which are known as PACT operators, which are quite similar to that of the Spark framework. The main difference is based on two unique iteration operators, namely bulkIteration and deltaIteration. The former operator employ the whole dataset in every run, whereas the latter divides the data in a workset and solution set. One of the advantages of these iterators is that fewer data has to be computed and sent between nodes  \cite{EwenTKM12}. In accordance to the former, these are better suited for an efficient implementation of both machine learning and data mining algorithms, supporting also data stream processing.
+MLlib project~\cite{mllib15} was born in 2012 as an extra component of Spark. It was released and open-sourced in 2013 under the Apache 2.0 license. From its inception, the number of contributions and people involved in the project have been growing steadily. Apart from official API, Spark provides a community package index~\cite{sparkpackages} (Spark Packages) to assemble all open source algorithms that work with MLlib. 
 
-As stated at the beginning, one of the most interesting features of the Flink framework is known as the PACT optimizer. It creates several semantically equivalent execution plans by reordering the PACT operators based on code analysis and data access conflicts \cite{Alexandrov14,Hues12}. The physical optimization chooses efficient strategies for data transport and operator execution on specific nodes. A cost-based strategy selects the most efficient plan based on criteria like network or storage I/O costs.
+MLlib is a Spark library geared towards offering distributed machine learning support to Spark engine. This library includes several out-of-the-box algorithms for alike tasks, such as: classification, clustering, regression, recommendation, even data preprocessing. Apart from distributed implementations of standard algorithms, MLlib offers:
 
-Finally, the Flink ecosystem also provides a Machine Learning library, FlinkML\footnote{\url{https://ci.apache.org/projects/flink/flink-docs-release-0.10/libs/ml/}}, which includes several data preprocessing, supervised learning, and recommender systems. It is still at a preliminary stage, but it is expected to add new algorithms in a short future.
+\begin{itemize}
+	\item Common Utilities: for distributed linear algebra, statistical analysis, internal format for model export, data generators, etc. 
+	\item Algorithmic optimizations: from the long list of optimizations included, we can highlight some: decisions trees, which borrow some ideas from PLANET project~\cite{panda09} (parallelized learning both within trees and across them); or generalized linear models, which benefit from employing fast C++-based linear algebra for internal computations.
+	\item Pipeline API: as the learning process in large-scale datasets is tedious and expensive, MLlib includes an internal package (\emph{spark.ml}) that provides an uniform high-level API to create complex multi-stage pipelines that connect several and alike components (preprocessing, learning, evaluation, etc.). \emph{spark.ml} allows model selection or hyper-parameter tuning, and different validations strategies like k-fold cross validation.
+	\item Spark integration: MLlib is perfectly integrated with other Spark components. Spark GraphX has several graph-based implementations in MLlib, like LDA. Likewise, several algorithms for online learning are available in Spark Streaming, such as online k-Means. In any case, most of component in the ASF stack are prepared to effortlessly cooperate with MLlib.
+\end{itemize}
+
+\subsection{Flink}\label{subsec:flink}
+
+Apache Flink~\cite{flink} is a distributed processing component focused on streaming processing, which was designed to solve problems derived from micro-batch models (Spark Streaming). Flink also supports batch data processing with programming abstractions in Java and Scala, though it is treated as a special case of streaming processing. In Flink, every job is implemented as a stream computation, and every task is executed as cyclic data flow with several iterations. 
+
+Flink provides two operators for iterations~\cite{flinkengine}, namely, standard and delta iterator. In standard iterator, Flink only works with a single partial solution, whereas delta iterator utilizes two worksets: the next entry set to process and the solution set.
+Among the set of advantages provided these iterators is the reduction of data to be computed and sent between nodes \cite{EwenTKM12}. According to the authors, new iterators are specially designed to tackle machine learning and data mining problems.
+
+Apart from iterators, Flink leverages from a PACT optimizer which analyzes the code and the data access conflicts to reorder operators and create semantically equivalent execution plans~\cite{Alexandrov14,Hues12}. Physical optimization is then applied on plans to boost data transport and operators' execution on nodes. Finally, PACT optimizer selects the most resource-efficient plan, regarding network and storage.
+
+Furthermore, Flink provides a complex fault tolerance mechanism to consistently recover the state of data streaming applications. This mechanism is generating consistent snapshots of the distributed data stream and operator state. In case of failure, the system can fall back to these snapshots.
+
+FlinkML is aimed at providing a set of scalable ML algorithms and an intuitive API to Flink users. Until now, FlinkML provides few alternatives for some fields in machine learning: SVM with CoCoA or Multiple Linear regression for supervised learning, k-NN join for unsupervised learning, scalers and polynomial features for preprocessing, Alternating Least Squares for recommendation, and other utilities for validation and outlier selection, among others. FlinkML also allows users to build complex analysis pipelines via chaining operations (like in MLlib). FlinkML pipelines are inspired by the design introduced by sklearn in~\cite{buitin13}.
 
 \section{Big Data Analytics on Fusion Process}\label{sec:fusion}
 
@@ -155,6 +179,6 @@ This work have been partially supported by the Spanish Ministry of Science and T
 %\noindent\appendix{\textbf{Bibliography}}\label{sec:biblio}
 
 \bibliographystyle{elsarticle-num}
-\bibliography{cloud}
+\bibliography{cloud,sergio}
 
 \end{document}
