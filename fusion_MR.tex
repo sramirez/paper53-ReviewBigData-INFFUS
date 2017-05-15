@@ -147,15 +147,45 @@ FlinkML is aimed at providing a set of scalable ML algorithms and an intuitive A
 
 \section{Big Data Analytics on Fusion Process}\label{sec:fusion}
 
-\TODO
+``Synchronizing flags'' in every distributed algorithmic approach is undoubtedly the most challenging part during the design process. This issue is not an exception in the MapReduce scheme. In this particular case, developers must take two significant decisions. On the one hand, the components selected for the key-value representation in both the Map and Reduce input and outputs. On the other hand, how the list of values are aggregated in the Reduce step. 
+
+For Big Data applications in Machine Learning, these choices are of extreme importance for the behavior of the final models. In this section, we want to analyze in detail this characteristic of the MapReduce programming environment by introducing a taxonomy to organize current state-of-the-art approaches regarding how partial models from the Map task are aggregated. We will determine how this fact may also affects the actual scalability of the whole system. 
+
+Specifically, we distinguish among three different type of models. First, those that carry out a direct fusion of partial models, thus becoming and ensemble system (Section \ref{subsec:ensemble}). Second, those that create a partial model within different Maps, and combine them to obtain a single output (Section \ref{subsec:submodels}). Finally, we identify those designs which distribute both data and sub-models to iteratively build the final system (Section \ref{subsec:exact}).
 
 \subsection{Direct fusion of models: ensemble approach}\label{subsec:ensemble}
 
-\TODO
+In every MapReduce framework, the system partitions the input training data to feed the Map functions. This computational paradigm reminds of the traditional \textit{bootstrap aggregating} (bagging) approach; in this case with no replacement. Therefore, it is straightforward to obtain an ensemble-based classifier \cite{Polikar2006} by directly joining every single model obtained in a different Map task. 
+
+The premise for this type of methodologies is simple yet effective. Each Map task works independently on its chunk of data. Depending on the user's requirements, each Map function is devoted to build a one or more models. For example, a pool of 100 classifiers to be obtained from 5 Maps will result on 20 classifiers per Map, each one of them built from a 20\% of the original dataset. The ``key'' is shared by all values given as output from the Map. This fact makes the logic of the Reduce phase to stress for its simplicity. Every single classifier is directly joined into the final system. 
+
+One of the first approaches to build an ensemble of classifiers with MapReduce was the Parallel Learner for Assembling Numerous
+Ensemble Trees (PLANET) in 2009 \cite{Panda09-DT-RF}. More recent proposals include a Random Forest for Hadoop \cite{Assun13-RF-H,Wang13-RF-H}, whose implementation can be found at Mahout-MapReduce Machine Learning library \cite{Mahout11,Mahout17}.
+
+%otros modelos???
+
+\textbf{FS: \cite{Ramirez-Gallego17-mrmr} es ensemble o approximate? Sergio please encargate de tu propio modelo.}
+
+%%%%
+
+There are two main advantages for this type of design. On the one hand, we have stressed its direct synergy with the MapReduce programming model, easing the programmer implementation. On the other hand, we must refer to the degree of diversity of those models obtained from different Maps, being a crucial characteristic for the success of these types of methods \cite{Kuncheva05}. 
+
+In spite of the previous goodness, there is one significant problem: there is a limit in the scalability degree. It must be acknowledge that there is a strong relationship between the number of Maps and the required number of models. In other words, we cannot decrease the total running time by adding a larger number of Maps, as this may result in ``void'' functions with a data input but no output. 
 
 \subsection{Approximate fusion of models: aggregation of partial systems}\label{subsec:submodels}
 
-\TODO
+Modelos que funcionan directamente. 
+
+This way, the most straightforward way to design an scalable algorithm is trying to avoid dependencies among parallel tasks. 
+
+FRBCS, 
+
+Another interesting approaches from the boosting perspective \cite{schapire99brief} were AdaBoost.PL, LogitBoost.PL and MultiBoost.PL \cite{Palit12-Boost}. These include and ensemble of ternary classifiers \cite{schapire99confidence}, or an ensemble of ensembles. The methodology in this case is exactly the same than for XXX.
+
+IS, 
+Clustering
+kNN, 
+
 
 \subsection{Exact fusion for scalable models: distributed data and models' partition}\label{subsec:exact}
 

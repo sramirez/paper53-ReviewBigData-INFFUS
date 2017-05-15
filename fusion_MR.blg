@@ -3,44 +3,80 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: fusion_MR.aux
 The style file: elsarticle-num.bst
 Database file #1: cloud.bib
-You've used 13 entries,
+I was expecting an "="---line 4 of file cloud.bib
+ :  author={Kumar,M. 
+ :                   and Kumar Rath,S.},
+I'm skipping whatever remains of this entry
+I was expecting an "="---line 14 of file cloud.bib
+ :  author={Alham,N. 
+ :                   K. and Li,M. and Liu,Y. and Qi,M.},
+I'm skipping whatever remains of this entry
+I was expecting an "="---line 27 of file cloud.bib
+ :  author={Dede,E. 
+ :                  and Govindaraju,M. and Gunter,D. and Ramakrishnan,L.},
+I'm skipping whatever remains of this entry
+I was expecting an "="---line 37 of file cloud.bib
+ :  author={Li,H. 
+ :                -. and Wu,G. -. and Hu,X. -. and Zhang,J. and Li,A. and Wu,X.},
+I'm skipping whatever remains of this entry
+I was expecting an "="---line 46 of file cloud.bib
+ :  author={Morton,K. 
+ :                    and Balazinska,M. and Grossman,D.},
+I'm skipping whatever remains of this entry
+I was expecting an "="---line 57 of file cloud.bib
+ :  author={Chen,J. 
+ :                  and Zheng,G. and Chen,H.},
+I'm skipping whatever remains of this entry
+I was expecting an "="---line 67 of file cloud.bib
+ :  author={Wang,L. 
+ :                  and Chen,D. and Ranjan,R. and Khan,S. U. and Ko?odziej,J. and Wang,J.},
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 2918 of file cloud.bib
+ :  
+ :  author={Chen,J. and Chen,H. and Wan,X. and Zheng,G.},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "Polikar2006"
+Warning--can't use both author and editor fields in Mahout11
+You've used 23 entries,
             2937 wiz_defined-function locations,
-            759 strings with 7793 characters,
-and the built_in function-call counts, 4648 in all, are:
-= -- 376
-> -- 236
-< -- 7
-+ -- 86
-- -- 73
-* -- 349
-:= -- 671
-add.period$ -- 13
-call.type$ -- 13
-change.case$ -- 15
+            829 strings with 9581 characters,
+and the built_in function-call counts, 7802 in all, are:
+= -- 676
+> -- 336
+< -- 9
++ -- 126
+- -- 103
+* -- 559
+:= -- 1080
+add.period$ -- 23
+call.type$ -- 23
+change.case$ -- 28
 chr.to.int$ -- 12
-cite$ -- 13
-duplicate$ -- 140
-empty$ -- 489
-format.name$ -- 85
-if$ -- 1180
+cite$ -- 24
+duplicate$ -- 246
+empty$ -- 852
+format.name$ -- 122
+if$ -- 2023
 int.to.chr$ -- 0
-int.to.str$ -- 13
-missing$ -- 15
-newline$ -- 47
-num.names$ -- 13
-pop$ -- 102
+int.to.str$ -- 23
+missing$ -- 25
+newline$ -- 78
+num.names$ -- 23
+pop$ -- 167
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 267
+skip$ -- 484
 stack$ -- 0
-substring$ -- 239
-swap$ -- 31
-text.length$ -- 3
+substring$ -- 420
+swap$ -- 59
+text.length$ -- 5
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
-warning$ -- 0
-while$ -- 30
-width$ -- 15
-write$ -- 114
+warning$ -- 1
+while$ -- 50
+width$ -- 25
+write$ -- 199
+(There were 8 error messages)
