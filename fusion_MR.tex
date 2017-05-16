@@ -65,63 +65,130 @@ In order to address all these objectives, this paper is organized as follows. Fi
 \section{MapReduce as Information Process Fusion}\label{sec:mr}
 
 
-
-
-INTRO
+\TODO
 
 \subsection{MR}\label{subsec:mr}
 
-The rapid growth and influx of data from private and public sectors has popularized the notion of ``Big data \cite{Fer14}''. The surge in Big Data has led to the development of custom models and algorithms that are able to extract significant value and insight in different areas such as medical, health care, business, management and so on \cite{Kam14,Chen14,Wu14}.
+The rapid growth and influx of data from private and public sectors has popularized the notion of ``Big data \cite{Fer14}''. The surge in Big Data has led to the development of custom paradigms and algorithms that are able to extract significant value and insight in different areas such as medical, health care, business, management and so on \cite{Kam14,Chen14,wu14}.
 
-In order to to provide robust and scalable solutions, new research paradigms and developmental tools have been made available. These frameworks have been designed to ease both the storage necessities and the processing of Big Data problems \cite{Fer14}. 
+%In order to provide robust and scalable solutions, new research paradigms and developmental tools have been made available. These frameworks have been designed to ease both the storage necessities and the processing of Big Data problems \cite{Fer14}. 
 
 The MapReduce execution environment \cite{Dea08} is the most common framework used in this scenario. Being a privative tool, its open source counterpart, known as Hadoop, has been traditionally used in academia research \cite{Whi15-Hadoop}. It has been designed to allow distributed computations in a transparent way for the programmer, also providing a fault-tolerant execution scheme. To take advantage of this scheme, any algorithm must be divided into two main stages: Map and Reduce. The first one is devoted to split the data for processing, whereas the second collects and aggregates the results.
 
-Additionally, the MapReduce model is defined with respect to an essential data structure: the $<$key,value$>$ pair. The processed data, the intermediate and final results work in terms of $<$key,value$>$ pairs. To summarize its procedure, Figure \ref{fig:mapreduce} illustrates a typical MapReduce program with its \textit{Map} and \textit{Reduce} steps. The terms $k_i:v_j$ refer to the key and value pair that are computed within each Map process. Then, values are grouped linking them to the same key, i.e. $k_i:v_j,\ldots, v_h$, and feed to the same Reduce process. Finally, values are aggregated with any function within the Reduce process to obtain the final result of the algorithm.
+Additionally, the MapReduce model is defined with respect to an essential data structure: the $<$key,value$>$ pair. The processed data, the intermediate and final results work in terms of $<$key,value$>$ pairs. To summarize its procedure, Figure \ref{fig:mapreduce} illustrates a typical MapReduce program with its \textit{Map} and \textit{Reduce} steps. %
 
 %\begin{comment}
 \begin{figure}[!ht]
-\centering \resizebox{0.75\textwidth}{!}{\includegraphics{mapreduce}} \caption{The MapReduce programming model.}
+\centering \resizebox{0.5\textwidth}{!}{\includegraphics{mapreduce}} \caption{The MapReduce programming model.}
 \label{fig:mapreduce}
 \end{figure}
 %\end{comment}
 
-From this initial model, more recent alternative frameworks have arisen to provide more efficient computations for iterative process, which are the basis for any Machine Learning algorithm. Among them, Apache Spark \cite{Zaharia12,Zaharia10} is clearly emerging as a more commonly embraced platform for implementing Machine Learning solutions that scale with Big Data.
+Map function first reads data and transforms them into a key-value format. Transformations in this phase may apply any sequence of operations on each record before sending the tuples across the network. Output keys are then shuffled and grouped by key value so that coincident keys are grouped together to form a list of values. Keys are then partitioned and sent to the Reducers according to some key-based scheme previously defined. Finally, the Reducers perform some kind of aggregation on the lists to eventually generate a single value for each pair. As an optimization, the reducer is also used as a combiner on the map outputs. This improvement reduces the total amount of data sent across the network by combining each word generated in the Map phase into a single pair.
+
+%The terms $k_i:v_j$ refer to the key and value pair that are computed within each Map process. Then, values are grouped linking them to the same key, i.e. $k_i:v_j,\ldots, v_h$, and feed to the same Reduce process. Finally, values are aggregated with any function within the Reduce process to obtain the final result of the algorithm.
+
+From another perspective, MapReduce, concretely the Reduce stage, can be seen as a information and/or model fusion process that aggregates partial results to obtain a more coarse-grained outcome. Although the Reduce phase may be skipped in some jobs in order to perform a straightforward parallelization of tasks, it is not the case in most of use cases in Big Data. 
+
+For example, Word Count in MapReduce comes to be one of the most widespread examples to illustrate the intrinsic fusion process performed behind this paradigm. WordCount example is intended to count the number of occurrences per word in a set of input text files. 
+In WordCount, each mapper reads a set of blocks formed by lines, and splits them into words.  It then emits a key-value pair with the word as key, and 1 as value. Afterwards, each reducer sums the scores for each word, and outputs a single key-value pair with the word and sum. 
+
+For example, consider the string "knock knock who is there?". A single mapper would receive and split this sentence as words, and then, it would form the initial pairs as: (knock,1), (knock,1), (who,1), (is,1), (there,1) (punctuations signs are obviated).
+
+In reducers, the keys are grouped together and the count values for identical keys (words) are added. In this case only one pair of similar keys `knock' would be aggregated so that the output pairs would be as follows: (knock,2), (who,1), (is,1), (there,1). As result, the user would receive the final number of hits for each word. 
+
+
+\cite{zhang14b, rio14b, meng15, rio15b}.
+
+%Despite these limitations, many Big Data technologies provide a wrapper implementation of MapReduce for end users (like Spark) due to its great popularity.
+
 
 \subsection{Alternatives}\label{subsec:altMR}
 
-\TODO
+Distributed processing frameworks in Big Data are responsible of ingesting, filtering, transforming, learning, querying, and exporting large amounts of data. Yet there exist many implementations for this concept, most of modern distributed frameworks follows a Single Instruction Multiple Datasets (SIMD)~\cite{sung00} scheme in order to execute the same sequence of instructions simultaneously on a distributed set of data partitions. Apart from defining the main scheme of execution, these frameworks also cope with other problems, such as: restarting failed processes, job scheduling, network synchronization, load-balancing, etc. In this section we focus on those models more relevant for current implementations in distributed computing.
+
+\subsubsection{Directed Acyclic Graph (DAG) Parallel Processing}
+All DAG-based distributed frameworks for Big Data~\cite{dennis74}, like Spark, organize their jobs by splitting them into a smaller set of atomic tasks. In this model vertices correspond with parallel tasks, whereas edges are associated with exchange of information. As shown in Figure~\ref{fig:dag}, vertices can have multiple connections between inputs and outputs, which imply that the same task can be run in different data and the same data in different partitions. Data flows are physically supported by shared memory, pipes, or disks. Instructions are duplicated and sent from the master to the slave nodes for a parallel execution. Notice that MapReduce can be deemed as an specific implementation of DAG-based processing, with only two functions as vertices. 
+
+%\begin{figure*}[htp]
+%    \centering
+%    \includegraphics[height=0.6\textheight]{../figures/dag}
+%    \caption{Direct Acyclic Graph Parallel Processing}
+%    \label{fig:dag}
+%\end{figure*}
+
+%Figure~\ref{fig:dag} depicts a DAG execution program with 4 tasks, and different partition configuration for each task. For instance, the top-most task in the graph is formed by 3 partitions. Once this task has finished, two dependent tasks (3 and 4) are started. Dependencies between partitions are not trivial as can be seen in the figure. Right-most partition in task 2 only depends on two input partitions, whereas left-most partitions has a single dependency. Finally, the input of task 4 is connected with the output of task 2 and 3. It is thus noteworthy to remark the differences between data (black dashed lines) and task dependencies (blue lines).
+
+\subsubsection{Bulk Synchronous Parallel (BSP) Processing}
+
+Bulk Synchronous Parallel (BSP)~\cite{vali90} systems are formed by a series of connected supersteps, implemented as directed graphs. In this scheme input data is the starting point. From here to the end, a set of Supersteps are applied on partitioned data in order to obtain the final output. As mentioned before, each Superstep correspond with an independent graph associated with a subtask to be solved. Once all compounding subtasks end, bulk synchronization of all outputs is committed. At this point vertices may send messages to the next Superstep, or receive some from previous steps, and also to modify its state and outgoing edges. 
+
+%Figure~\ref{fig:bsp} shows a toy example for BSP processing with two Supersteps and one synchronization barrier. Subtasks in each Superstep are depicted as rectangles with variable height (task duration), and data flows as dashed lines. Synchronization barrier acts as a time proxy between stages. Although subtask cannot start before every previous subtask have finished, however, communication between stages is allowed.
+
+%\begin{figure*}[htp]
+%    \centering
+%    \includegraphics[height=0.6\textheight]{../figures/bsp}
+%    \caption{Bulk Synchronous Parallel (BSP) Processing}
+%    \label{fig:bsp}
+%\end{figure*}
 
 \section{Big Data Technologies for Analytics}\label{sec:techno}
 
-\TODO
 
-\subsection{Hadoop}\label{subsec:hadoop}
+Nowadays, the volume of data currently managed by our storage systems have surpassed the processing capacity of traditional systems~\cite{wu14}, and this applies to data mining as well. Distributed computing has been widely used by data scientists before the advent of Big Data. Many standard and time-consuming algorithms were replaced by more rapid distributed versions that make affordable the learning process. Nevertheless, for most of current massive problems, a distributed approach becomes mandatory nowadays since no batch architecture is able to address such magnitudes.
 
-\TODO
+Beyond High Performance Computing (HPC) solutions, new large-scale processing platforms are intended to bring closer distributed processing to practitioners and experts by hiding the technical nuances derived from these environments. Novel and complex designs are required to create and maintain these platforms, which generalizes the utilization of distributed computing for standard users. 
+
+As a result of the fast evolving of Big Data environment, a myriad of tools, paradigms and techniques have surged to tackle different use cases in industry and science. However, because of the myriad of tools, it is often difficult for practitioners and experts to analyze and select the right tool for each goal. In this section we present and analyze some alternatives for distributed processing with the objective of providing the necessary knowledge that helps users to decide which alternative better fits their requirements. We also outline the software libraries that gives support to the distributed learning task in these platforms.
+
+\subsection{Apache Hadoop}\label{subsec:hadoop}
+
+Undoubtedly Hadoop MapReduce may be deemed as the primary platform in the Big Data space. After the presentation of MapReduce by Google designers~\cite{dean04}, Hadoop MapReduce was grown by the community, and became the most used and powerful open-source implementation of MapReduce. Nowadays leading companies such as Yahoo has scaled from 100-node Hadoop clusters to 42K nodes and hundreds of petabytes~\cite{harris13} thanks to the outstanding performance of Hadoop. 
+
+The main idea behind Hadoop was to create a common framework which can process large-scale data on a cluster of commodity hardware, without incurring in a high cost in developing (in contrast to HPC solutions) and execution time. Hadoop MapReduce was originally composed by two elements: the first one was a distributed storage system called Hadoop Distributed File System (HDFS), whereas the second one was a data processing framework that allows to run MapReduce-like jobs. Apart from these goals, Hadoop implements primitives to address cluster scalability, failure recovery, and resource scheduling, among others.
+
+But Hadoop is today more than a single technology, but a complete software stack and ecosystem formed by several top-level components that address diverse purposes. For instance, Apache Giraph for graph processing or Apache Hive for data warehousing. The common factor is that all of them rely on Hadoop, and are tightly linked to this technology. Some projects are actually Apache top-level projects~\cite{apache}, whereas others are continuously evolving or being created.%In this section, we focus on enumerating the main components of Hadoop, as well as the cutting-edge elements recently developed for the ecosystem. %All components are divided into several categories: storage, processing, high-level components. Figure~\ref{fig:hadoopeco} depicts a simplified scheme with the most popular components.
+
+\textbf{HDFS}~\cite{hdfs} can be deemed as the main module of Apache Hadoop. It supports distributed storage for large-scale data through the use of distributed files, which themselves are composed by fixed-size data blocks. These blocks or partitions are equally distributed among the data nodes in order to balance as much as possible the overall disk usage in the cluster. HDFS also allows replication of blocks across different nodes and racks. In HDFS, the first block is ensured to be placed in the same processing node, whereas the other two replicas are sent to different racks to prevent abrupt ends due to inter-rack issues. 
+
+HDFS was thought to work with several storage formats. It offers several APIs to read/write registers. Some relevant APIs are: InputFormat (to read customizable registers), or RecordWriter (to write record-shaped elements). Users can also developed their own storage format, and to compress data according to their requirements. Persistence in Hadoop is mainly performed in disk. However, there are some novel advances to optimize persistence by introducing some memory usage. For instance, in Apache Hadoop version 3.0 was introduced the option of memory usage as temporary storage.
+
+Although \textbf{MapReduce}~\cite{dean04} is the native processing solution in Apache Hadoop, today it supports multiple alternatives with different processing schemes. All these solutions have in common that use a set of data nodes to run tasks on the local data blocks, and one master node (or more) to coordinate these tasks. For instance,~\textbf{Apache Tez}~\cite{tez} is a processing engine that transforms processing jobs into direct acyclic graphs (DAGs). Thanks to Tez, users can run any arbitrary complex DAG of jobs in HDFS. Tez thus efficiently solves interactive and iterative processes, like those present in machine learning processes. Its most relevant contribution is that Tez translate any complex job to a single MapReduce phase. Furthermore, it does not need to store intermediate files and reuses idle resources, which highly boost the overall performance.
+
+Hadoop MapReduce evolves to a more general component, called \textbf{Yet Another Resource Negotiator (YARN)}~\cite{yarn}, which provides extra management and maintenance services relied to other components in the past. YARN also acts as a facade for different types of distributed processing engines based on HDFS, such as Spark, Flink or Storm. In short, YARN was intended as a generic purpose system that separates the responsibilities of resource management (performed by YARN), and running management (performed by top-level applications).
+
+Among the full set of advantages claimed by YARN, we can highlight its capacity to run several application on the same cluster without the necessity of moving data. In fact, YARN allows reusing resources across alike applications in parallel, which improves the overall usage of resources.
+
+\subsubsection{Apache Mahout}
+
+Since the magnitude of learning problems has been growing exponentially, data scientists demands rapid tools that efficiently extract knowledge from large-scale data. This problem has been solved by MapReduce and other platforms by providing scalable algorithms and miscellaneous utilities in form of machine learning libraries. These libraries are compatible with the main Hadoop engine, and use as input the data stored in the storage components. 
+
+\textbf{Apache Mahout}~\cite{mahout} was the main contribution from Apache Hadoop to this field. Although it can be deemed as mainly obsolete nowadays, Mahout is considered as the first attempt to fill the gap of scalable machine learning support for Big Data. Mahout comprises several algorithms for plenty of tasks, such as: classification, clustering, pattern-mining, etc. Among a long list of golden algorithms in Mahout, we can highlight Random Forest or Na\"ive Bayes. 
+
+The most recent version (0.13.0) provides three new major features: novel support for Apache Spark and Flink, a vector math experimentation for R, and GPU support based on large matrix multiplications. Although Mahout was originally designed for Hadoop, some algorithms have been implemented on Spark as a consequence of the latter one's popularity. Mahout is also able to run on top of Flink, being only compatible for static processing though.
 
 \subsection{Spark}\label{subsec:spark}
 
-Apache Spark Framework~\cite{spark} was born in 2010 with the publication of Resilient Distributed Datasets (RDD) structures~\cite{zaharia12}, the key idea behind Spark. Although ASF has a close relationship with many components from Hadoop Ecosystem, Spark provides specific support for every step in the Big Data stack, such as its own processing engine, and machine learning library. 
+\textbf{Apache Spark Framework}~\cite{spark} was born in 2010 with the publication of Resilient Distributed Datasets (RDD) structures~\cite{zaharia12}, the keystone behind Spark. Although Spark has a close relationship with Hadoop Ecosystem, it provides specific support for every step in the Big Data stack, such as its own processing engine, and machine learning library. 
 
-Apache Spark~\cite{hamstra15} can be defined as a distributed computing platform which can process large volume data sets in memory with a very fast response time, thanks to its memory-intensive scheme. It was originally thought to tackle problems deemed as unsuitable for previous disk-based engines like Hadoop. Continued use of disk is replaced in Spark by memory-based operators that efficiently deal with iterative and interactive problems (prone to multiple I/O actions). 
+Apache Spark~\cite{hamstra15} is defined as a distributed computing platform which can process large volume data sets in memory with a very fast response time due to its memory-intensive scheme. It was originally thought to tackle problems deemed as unsuitable for previous disk-based engines like Hadoop. Continued use of disk is replaced in Spark by memory-based operators that efficiently deal with iterative and interactive problems (prone to multiple I/O operations). 
 
 %RDD
-The heart of Spark is formed by Resilient Distributed Datasets (RDD), which transparently controls how data are distributed and transformed across the cluster. Users just need to define some high-level functions that will be applied and managed by RDDs. These elements are created whenever data are read from any source, or as a result of a transformation. RDDs consist of a collection of data partitions distributed across several data nodes. A wide range of operations are provided for transforming RDDs, such as: filtering, grouping, set operations, among others. Furthermore RDDs are also highly versatile as they allows users to customize partitioning for an optimized data placement, or to preserve data in several formats and contexts.
+The heart of Spark is formed by \textbf{Resilient Distributed Datasets (RDD)}, which transparently controls how data are distributed and transformed across the cluster. Users just need to define some high-level functions that will be applied and managed by RDDs. These elements are created whenever data are read from any source, or as a result of a transformation. RDDs consist of a collection of data partitions distributed across several data nodes. A wide range of operations are provided for transforming RDDs, such as: filtering, grouping, set operations, among others. Furthermore RDDs are also highly versatile as they allows users to customize partitioning for an optimized data placement, or to preserve data in several formats and contexts.
 
 % lineage
 In Spark, fault tolerance is solved by annotating operations in a structure called lineage. Spark transformations annotated in the lineage are only performed whenever a trigger I/O operations appears in the log. In case of failure, Spark re-computes the affected brach in the lineage log. Although replication is normally skipped, Spark allows to spill data in local disk in case the memory capacity is not sufficient. 
 
 %Dataframes
-Spark developers provided another high-level abstraction, called DataFrames, which introduces the concept of formal schema in RDDs. DataFrames are distributed and structured collections of data organized by named columns. They can be seen as a table in a relational database or a dataframe in R, or Python (Pandas). As a plus, relational query plans built by DataFrames are optimized by the Spark's Catalyst optimizer throughout the previously defined schema. Also thanks to the scheme, Spark is able to understand data and remove costly Java serialization actions.
+Spark developers provided another high-level abstraction, called \textbf{DataFrames}, which introduces the concept of formal schema in RDDs. DataFrames are distributed and structured collections of data organized by named columns. They can be seen as a table in a relational database or a dataframe in R, or Python (Pandas). As a plus, relational query plans built by DataFrames are optimized by the Spark's Catalyst optimizer throughout the previously defined schema. Also thanks to the scheme, Spark is able to understand data and remove costly Java serialization actions.
 
 %Datasets
-A compromise between structure awareness and the optimization benefits of Catalyst is achieved by the novel Dataset API. Datasets are strongly typed collections of objects connected to a relational schema. Among the benefits of Datasets, we can find compile-time type safety, which means applications can be sanitized before running. Furthermore, Datasets provide encoders for free to directly convert JVM objects to the binary tabular Tungsten format. These efficient in-memory format improves memory usage, and allows to directly apply operations on serialized data. Datasets are intended to be the single interface in future Spark for handling data.
+A compromise between structure awareness and the optimization benefits of Catalyst is achieved by the novel Dataset API. \textbf{Datasets} are strongly typed collections of objects connected to a relational schema. Among the benefits of Datasets, we can find compile-time type safety, which means applications can be sanitized before running. Furthermore, Datasets provide encoders for free to directly convert JVM objects to the binary tabular Tungsten format. These efficient in-memory format improves memory usage, and allows to directly apply operations on serialized data. Datasets are intended to be the single interface in future Spark for handling data.
 
 \subsubsection{MLlib}
 
 
-MLlib project~\cite{mllib15} was born in 2012 as an extra component of Spark. It was released and open-sourced in 2013 under the Apache 2.0 license. From its inception, the number of contributions and people involved in the project have been growing steadily. Apart from official API, Spark provides a community package index~\cite{sparkpackages} (Spark Packages) to assemble all open source algorithms that work with MLlib. 
+\textbf{MLlib} project~\cite{mllib15} was born in 2012 as an extra component of Spark. It was released and open-sourced in 2013 under the Apache 2.0 license. From its inception, the number of contributions and people involved in the project have been growing steadily. Apart from official API, Spark provides a community package index~\cite{sparkpackages} (Spark Packages) to assemble all open source algorithms that work with MLlib. 
 
 MLlib is a Spark library geared towards offering distributed machine learning support to Spark engine. This library includes several out-of-the-box algorithms for alike tasks, such as: classification, clustering, regression, recommendation, even data preprocessing. Apart from distributed implementations of standard algorithms, MLlib offers:
 
@@ -129,21 +196,21 @@ MLlib is a Spark library geared towards offering distributed machine learning su
 	\item Common Utilities: for distributed linear algebra, statistical analysis, internal format for model export, data generators, etc. 
 	\item Algorithmic optimizations: from the long list of optimizations included, we can highlight some: decisions trees, which borrow some ideas from PLANET project~\cite{panda09} (parallelized learning both within trees and across them); or generalized linear models, which benefit from employing fast C++-based linear algebra for internal computations.
 	\item Pipeline API: as the learning process in large-scale datasets is tedious and expensive, MLlib includes an internal package (\emph{spark.ml}) that provides an uniform high-level API to create complex multi-stage pipelines that connect several and alike components (preprocessing, learning, evaluation, etc.). \emph{spark.ml} allows model selection or hyper-parameter tuning, and different validations strategies like k-fold cross validation.
-	\item Spark integration: MLlib is perfectly integrated with other Spark components. Spark GraphX has several graph-based implementations in MLlib, like LDA. Likewise, several algorithms for online learning are available in Spark Streaming, such as online k-Means. In any case, most of component in the ASF stack are prepared to effortlessly cooperate with MLlib.
+	\item Spark integration: MLlib is perfectly integrated with other Spark components. Spark GraphX has several graph-based implementations in MLlib, like LDA. Likewise, several algorithms for online learning are available in Spark Streaming, such as online k-Means. In any case, most of component in the Spark stack are prepared to effortlessly cooperate with MLlib.
 \end{itemize}
 
 \subsection{Flink}\label{subsec:flink}
 
-Apache Flink~\cite{flink} is a distributed processing component focused on streaming processing, which was designed to solve problems derived from micro-batch models (Spark Streaming). Flink also supports batch data processing with programming abstractions in Java and Scala, though it is treated as a special case of streaming processing. In Flink, every job is implemented as a stream computation, and every task is executed as cyclic data flow with several iterations. 
+\textbf{Apache Flink}~\cite{flink} is a distributed processing component focused on streaming processing, which was designed to solve problems derived from micro-batch models (Spark Streaming). Flink also supports batch data processing with programming abstractions in Java and Scala, though it is treated as a special case of streaming processing. In Flink, every job is implemented as a stream computation, and every task is executed as cyclic data flow with several iterations. 
 
 Flink provides two operators for iterations~\cite{flinkengine}, namely, standard and delta iterator. In standard iterator, Flink only works with a single partial solution, whereas delta iterator utilizes two worksets: the next entry set to process and the solution set.
-Among the set of advantages provided these iterators is the reduction of data to be computed and sent between nodes \cite{EwenTKM12}. According to the authors, new iterators are specially designed to tackle machine learning and data mining problems.
+Among the set of advantages provided by iterators is the reduction of data to be computed and sent between nodes \cite{EwenTKM12}. According to the authors, new iterators are specially designed to tackle machine learning and data mining problems.
 
 Apart from iterators, Flink leverages from a PACT optimizer which analyzes the code and the data access conflicts to reorder operators and create semantically equivalent execution plans~\cite{Alexandrov14,Hues12}. Physical optimization is then applied on plans to boost data transport and operators' execution on nodes. Finally, PACT optimizer selects the most resource-efficient plan, regarding network and storage.
 
 Furthermore, Flink provides a complex fault tolerance mechanism to consistently recover the state of data streaming applications. This mechanism is generating consistent snapshots of the distributed data stream and operator state. In case of failure, the system can fall back to these snapshots.
 
-FlinkML is aimed at providing a set of scalable ML algorithms and an intuitive API to Flink users. Until now, FlinkML provides few alternatives for some fields in machine learning: SVM with CoCoA or Multiple Linear regression for supervised learning, k-NN join for unsupervised learning, scalers and polynomial features for preprocessing, Alternating Least Squares for recommendation, and other utilities for validation and outlier selection, among others. FlinkML also allows users to build complex analysis pipelines via chaining operations (like in MLlib). FlinkML pipelines are inspired by the design introduced by sklearn in~\cite{buitin13}.
+\textbf{FlinkML} is aimed at providing a set of scalable ML algorithms and an intuitive API to Flink users. Until now, FlinkML provides few alternatives for some fields in machine learning: SVM with CoCoA~\cite{jaggi14}, or Multiple Linear regression for supervised learning, k-NN join for unsupervised learning, scalers and polynomial features for preprocessing, Alternating Least Squares for recommendation, and other utilities for validation and outlier selection, among others. FlinkML also allows users to build complex analysis pipelines via chaining operations (like in MLlib). FlinkML pipelines are inspired by the design introduced by sklearn in~\cite{buitin13}.
 
 \section{Big Data Analytics on Fusion Process}\label{sec:fusion}
 
