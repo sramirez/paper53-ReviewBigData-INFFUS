@@ -20,9 +20,9 @@ C.~P. Chen, C.-Y. Zhang, Data-intensive applications, challenges, techniques
   and technologies: A survey on {Big Data}, Information Sciences 275 (2014)
   314--347.
 
-\bibitem{Wu14}
-X.~Wu, X.~Zhu, G.-Q. Wu, W.~Ding, Data mining with {Big Data}, IEEE
-  Transactions of Knowledge Data Engineering 26~(1) (2014) 97--107.
+\bibitem{wu14}
+X.~Wu, X.~Zhu, G.-Q. Wu, W.~Ding, Data mining with big data, Knowledge and Data
+  Engineering, IEEE Transactions on 26~(1) (2014) 97--107.
 
 \bibitem{Dea08}
 J.~Dean, S.~Ghemawat, {{MapReduce}:} simplified data processing on large
@@ -31,25 +31,96 @@ J.~Dean, S.~Ghemawat, {{MapReduce}:} simplified data processing on large
 \bibitem{Whi15-Hadoop}
 T.~White, Hadoop: The Definitive Guide, 4th Edition, O'Reilly Media, 2015.
 
-\bibitem{Zaharia12}
-M.~Zaharia, M.~Chowdhury, T.~Das, A.~Dave, J.~Ma, M.~McCauly, M.~J. Franklin,
+\bibitem{zhang14b}
+Q.~Zhang, B.~Wu, J.~Yang, Parallelization of ontology construction and fusion
+  based on mapreduce, 2014, pp. 439--443.
+
+\bibitem{rio14b}
+S.~del R\'io, V.~L\'opez, J.~Ben\'itez, F.~Herrera, On the use of mapreduce for
+  imbalanced big data using random forest, Information Sciences 285 (2014) 112
+  -- 137.
+
+\bibitem{meng15}
+J.~Meng, R.~Li, J.~Zhang, Parallel information fusion method for microarray
+  data analysis, 2015, pp. 1539--1544.
+
+\bibitem{rio15b}
+S.~del R\'io, V.~L\'opez, J.~Ben\'itez, F.~Herrera, A mapreduce approach to
+  address big data classification problems based on the fusion of linguistic
+  fuzzy rules, International Journal of Computational Intelligence Systems
+  8~(3) (2015) 422--437.
+
+\bibitem{dean04}
+J.~Dean, S.~Ghemawat, {MapReduce}: simplified data processing on large
+  clusters, in: OSDIâ€™04: PROCEEDINGS OF THE 6TH CONFERENCE ON SYMPOSIUM ON
+  OPERATING SYSTEMS DESIGN AND IMPLEMENTATION, USENIX Association, 2004.
+
+\bibitem{harris13}
+D.~Harris, {The history of Hadoop: From 4 nodes to the future of data},
+  \url{https://gigaom.com/2013/03/04/the-history-of-hadoop-from-4-nodes-to-the-future-of-data/}
+  (2013).
+
+\bibitem{apache}
+A.~S. Foundation, {Apache Project Directory},
+  \url{https://projects.apache.org/} (2017).
+
+\bibitem{hdfs}
+H.~D.~F. System, {Hadoop Distributed File System},
+  \url{https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsUserGuide.html}
+  (2017).
+
+\bibitem{tez}
+A.~Tez, {Apache Tez}, \url{https://tez.apache.org/} (2017).
+
+\bibitem{yarn}
+A.~YARN, {Apache YARN},
+  \url{https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html}
+  (2017).
+
+\bibitem{mahout}
+A.~Mahout, {Apache Mahout}, \url{https://mahout.apache.org/} (2017).
+
+\bibitem{spark}
+A.~Spark, {Apache Spark: Lightning-fast cluster computing},
+  \url{http://spark.apache.org/} (2016).
+
+\bibitem{zaharia12}
+M.~Zaharia, M.~Chowdhury, T.~Das, A.~Dave, J.~Ma, M.~McCauley, M.~J. Franklin,
   S.~Shenker, I.~Stoica, Resilient distributed datasets: A fault-tolerant
-  abstraction for in-memory cluster computing, in: Presented as part of the 9th
-  USENIX Symposium on Networked Systems Design and Implementation (NSDI 12),
-  USENIX, San Jose, CA, 2012, pp. 15--28.
+  abstraction for in-memory cluster computing, in: Proceedings of the 9th
+  USENIX Conference on Networked Systems Design and Implementation, NSDI'12,
+  2012, pp. 2--2.
 
-\bibitem{Zaharia10}
-M.~Zaharia, M.~Chowdhury, M.~J. Franklin, S.~Shenker, I.~Stoica, Spark: Cluster
-  computing with working sets, in: HotCloud 2010, 2010, pp. 1--7.
+\bibitem{hamstra15}
+M.~Hamstra, H.~Karau, M.~Zaharia, A.~Konwinski, P.~Wendell, Learning Spark:
+  Lightning-Fast Big Data Analytics, O'Reilly Media, Incorporated, 2015.
 
-\bibitem{Kra13}
-T.~Kraska, A.~Talwalkar, J.Duchi, R.~Griffith, M.~Franklin, M.~Jordan, Mlbase:
-  A distributed machine learning system, in: Conference on Innovative Data
-  Systems Research, 2013, pp. 1--7.
+\bibitem{mllib15}
+X.~Meng, J.~Bradley, B.~Yavuz, E.~Sparks, S.~Venkataraman, D.~Liu, J.~Freeman,
+  D.~Tsai, M.~Amde, S.~Owen, D.~Xin, R.~Xin, M.~J. Franklin, R.~Zadeh,
+  M.~Zaharia, A.~Talwalkar, Mllib: Machine learning in apache spark, Journal of
+  Machine Learning Research 17~(34) (2016) 1--7.
 
-\bibitem{Owe11}
-S.~Owen, R.~Anil, T.~Dunning, E.~Friedman, Mahout in Action, 1st Edition,
-  Manning Publications Co., 2011.
+\bibitem{sparkpackages}
+S.~Packages, {3rd Party Spark Packages}, \url{https://spark-packages.org/}
+  (2017).
+
+\bibitem{panda09}
+B.~Panda, J.~S. Herbach, S.~Basu, R.~J. Bayardo, Planet: Massively parallel
+  learning of tree ensembles with mapreduce, in: Proceedings of the 35th
+  International Conference on Very Large Data Bases (VLDB-2009), 2009.
+
+\bibitem{flink}
+A.~Flink, {Apache Flink}, \url{http://flink.apache.org/} (2016).
+
+\bibitem{flinkengine}
+{Apache Flink Project}, {Peeking into Apache Flink's Engine Room},
+  \url{https://flink.apache.org/news/2015/03/13/peeking-into-Apache-Flinks-Engine-Room.html
+  } (2016).
+
+\bibitem{EwenTKM12}
+S.~Ewen, K.~Tzoumas, M.~Kaufmann, V.~Markl, Spinning fast iterative data flows,
+  PVLDB 5~(11) (2012) 1268--1279.
 
 \bibitem{Alexandrov14}
 A.~Alexandrov, R.~Bergmann, S.~Ewen, J.-C. Freytag, F.~Hueske, A.~Heise,
@@ -63,8 +134,17 @@ F.~Hueske, M.~Peters, M.~Sax, A.~Rheinländer, R.~Bergmann, A.~Krettek,
   K.~Tzoumas, Opening the black boxes in data flow optimization, PVLDB 5 (2012)
   1256--1267.
 
-\bibitem{EwenTKM12}
-S.~Ewen, K.~Tzoumas, M.~Kaufmann, V.~Markl, Spinning fast iterative data flows,
-  PVLDB 5~(11) (2012) 1268--1279.
+\bibitem{jaggi14}
+M.~Jaggi, V.~Smith, M.~Tak{\'{a}}c, J.~Terhorst, S.~Krishnan, T.~Hofmann, M.~I.
+  Jordan, \href{http://arxiv.org/abs/1409.1458}{Communication-efficient
+  distributed dual coordinate ascent}, CoRR abs/1409.1458.
+\newline\urlprefix\url{http://arxiv.org/abs/1409.1458}
+
+\bibitem{buitin13}
+L.~Buitinck, G.~Louppe, M.~Blondel, F.~Pedregosa, A.~Mueller, O.~Grisel,
+  V.~Niculae, P.~Prettenhofer, A.~Gramfort, J.~Grobler, R.~Layton,
+  J.~VanderPlas, A.~Joly, B.~Holt, G.~Varoquaux, {API} design for machine
+  learning software: experiences from the scikit-learn project, in: ECML PKDD
+  Workshop: Languages for Data Mining and Machine Learning, 2013, pp. 108--122.
 
 \end{thebibliography}

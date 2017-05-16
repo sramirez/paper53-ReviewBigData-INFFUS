@@ -1,46 +1,75 @@
-This is BibTeX, Version 0.99d (TeX Live 2015)
+This is BibTeX, Version 0.99d (TeX Live 2015/dev/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: fusion_MR.aux
 The style file: elsarticle-num.bst
 Database file #1: cloud.bib
-You've used 13 entries,
+Database file #2: sergio.bib
+Warning--entry type for "sparkpackages" isn't style-file defined
+--line 1 of file sergio.bib
+Warning--entry type for "harris13" isn't style-file defined
+--line 17 of file sergio.bib
+Warning--entry type for "spark" isn't style-file defined
+--line 25 of file sergio.bib
+Warning--entry type for "flink" isn't style-file defined
+--line 32 of file sergio.bib
+Warning--entry type for "flinkengine" isn't style-file defined
+--line 39 of file sergio.bib
+Warning--entry type for "mahout" isn't style-file defined
+--line 97 of file sergio.bib
+Warning--entry type for "yarn" isn't style-file defined
+--line 114 of file sergio.bib
+Warning--entry type for "hdfs" isn't style-file defined
+--line 122 of file sergio.bib
+Warning--entry type for "apache" isn't style-file defined
+--line 129 of file sergio.bib
+Warning--entry type for "tez" isn't style-file defined
+--line 136 of file sergio.bib
+Warning--I didn't find a database entry for "sung00"
+Warning--I didn't find a database entry for "dennis74"
+Warning--I didn't find a database entry for "vali90"
+Warning--empty booktitle in zhang14b
+Warning--empty booktitle in meng15
+Warning--empty pages in dean04
+Warning--empty pages in panda09
+You've used 30 entries,
             2937 wiz_defined-function locations,
-            759 strings with 7793 characters,
-and the built_in function-call counts, 4648 in all, are:
-= -- 376
-> -- 236
-< -- 7
-+ -- 86
-- -- 73
-* -- 349
-:= -- 671
-add.period$ -- 13
-call.type$ -- 13
-change.case$ -- 15
-chr.to.int$ -- 12
-cite$ -- 13
-duplicate$ -- 140
-empty$ -- 489
-format.name$ -- 85
-if$ -- 1180
+            837 strings with 10824 characters,
+and the built_in function-call counts, 9026 in all, are:
+= -- 753
+> -- 425
+< -- 6
++ -- 161
+- -- 131
+* -- 578
+:= -- 1267
+add.period$ -- 30
+call.type$ -- 30
+change.case$ -- 30
+chr.to.int$ -- 6
+cite$ -- 34
+duplicate$ -- 277
+empty$ -- 1018
+format.name$ -- 150
+if$ -- 2358
 int.to.chr$ -- 0
-int.to.str$ -- 13
-missing$ -- 15
-newline$ -- 47
-num.names$ -- 13
-pop$ -- 102
+int.to.str$ -- 30
+missing$ -- 22
+newline$ -- 99
+num.names$ -- 30
+pop$ -- 231
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 267
+skip$ -- 602
 stack$ -- 0
-substring$ -- 239
-swap$ -- 31
-text.length$ -- 3
+substring$ -- 356
+swap$ -- 59
+text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
-warning$ -- 0
-while$ -- 30
-width$ -- 15
-write$ -- 114
+warning$ -- 4
+while$ -- 52
+width$ -- 32
+write$ -- 250
+(There were 17 warnings)
