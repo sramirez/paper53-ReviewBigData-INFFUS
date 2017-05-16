@@ -95,6 +95,7 @@ M.~Zaharia, M.~Chowdhury, T.~Das, A.~Dave, J.~Ma, M.~McCauley, M.~J. Franklin,
 M.~Hamstra, H.~Karau, M.~Zaharia, A.~Konwinski, P.~Wendell, Learning Spark:
   Lightning-Fast Big Data Analytics, O'Reilly Media, Incorporated, 2015.
 
+<<<<<<< HEAD
 \bibitem{mllib15}
 X.~Meng, J.~Bradley, B.~Yavuz, E.~Sparks, S.~Venkataraman, D.~Liu, J.~Freeman,
   D.~Tsai, M.~Amde, S.~Owen, D.~Xin, R.~Xin, M.~J. Franklin, R.~Zadeh,
@@ -118,6 +119,8 @@ A.~Flink, {Apache Flink}, \url{http://flink.apache.org/} (2016).
   \url{https://flink.apache.org/news/2015/03/13/peeking-into-Apache-Flinks-Engine-Room.html
   } (2016).
 
+=======
+>>>>>>> 9c92a090cef8c4de356436c52f439508260b6e77
 \bibitem{EwenTKM12}
 S.~Ewen, K.~Tzoumas, M.~Kaufmann, V.~Markl, Spinning fast iterative data flows,
   PVLDB 5~(11) (2012) 1268--1279.
@@ -134,6 +137,7 @@ F.~Hueske, M.~Peters, M.~Sax, A.~Rheinländer, R.~Bergmann, A.~Krettek,
   K.~Tzoumas, Opening the black boxes in data flow optimization, PVLDB 5 (2012)
   1256--1267.
 
+<<<<<<< HEAD
 \bibitem{jaggi14}
 M.~Jaggi, V.~Smith, M.~Tak{\'{a}}c, J.~Terhorst, S.~Krishnan, T.~Hofmann, M.~I.
   Jordan, \href{http://arxiv.org/abs/1409.1458}{Communication-efficient
@@ -146,5 +150,85 @@ L.~Buitinck, G.~Louppe, M.~Blondel, F.~Pedregosa, A.~Mueller, O.~Grisel,
   J.~VanderPlas, A.~Joly, B.~Holt, G.~Varoquaux, {API} design for machine
   learning software: experiences from the scikit-learn project, in: ECML PKDD
   Workshop: Languages for Data Mining and Machine Learning, 2013, pp. 108--122.
+=======
+\bibitem{Panda09-DT-RF}
+B.~Panda, J.~S. Herbach, S.~Basu, R.~J. Bayardo, Planet: Massively parallel
+  learning of tree ensembles with mapreduce, Proceedings of the VLDB Endowment
+  2~(2) (2009) 1426--1437, cited By :122.
+
+\bibitem{Assun13-RF-H}
+J.~Assuncao, P.~Fernandes, L.~Lopes, S.~Normey, Distributed stochastic aware
+  random forests - efficient data mining for big data, in: Proceedings - 2013
+  IEEE International Congress on Big Data, BigData 2013, 2013, pp. 425--426,
+  cited By :7.
+
+\bibitem{Wang13-RF-H}
+Y.~Wang, W.~Goh, L.~Wong, G.~Montana, Random forests on hadoop for genome-wide
+  association studies of multivariate neuroimaging phenotypes, BMC
+  Bioinformatics 14~(SUPPL16), cited By :24.
+
+\bibitem{Mahout11}
+S.~Owen, R.~Anil, T.~Dunning, E.~Friedman, Mahout in Action, Manning, 2011.
+
+\bibitem{Mahout17}
+{The Apache Software Foundation}, \href{http://mahout.apache.org/}{Mahout, an
+  open source project which includes scalable machine learning algorithms}
+  (2017).
+\newline\urlprefix\url{http://mahout.apache.org/}
+
+\bibitem{Ramirez-Gallego17-mrmr}
+S.~Ram\'irez-Gallego, I.~Lastra, D.~Mart\'inez-Rego, V.~Bol\'on-Canedo, J.~M.
+  Ben\'itez, F.~Herrera, A.~Alonso-Betanzos, Fast-mrmr: Fast minimum redundancy
+  maximum relevance algorithm for high-dimensional big data., International
+  Journal of Intelligent Systems 32~(2) (2017) 134--152.
+
+\bibitem{Kuncheva05}
+L.~I. Kuncheva, Diversity in multiple classifier systems, Information Fusion
+  6~(1) (2005) 3--4.
+
+\bibitem{Zhao09-kMeans}
+W.~Zhao, H.~Ma, Q.~He, Parallel K-means clustering based on MapReduce, Vol.
+  5931 of Lecture Notes in Computer Science (including subseries Lecture Notes
+  in Artificial Intelligence and Lecture Notes in Bioinformatics), 2009.
+
+\bibitem{TrigueroPBGH15-PR}
+I.~Triguero, D.~Peralta, J.~Bacardit, S.~Garc\'ia, F.~Herrera, Mrpr: A
+  mapreduce solution for prototype reduction in big data classification.,
+  Neurocomputing 150 (2015) 331--345.
+
+\bibitem{TrigueroDGH12}
+I.~Triguero, J.~Derrac, S.~Garc\'ia, F.~Herrera, A taxonomy and experimental
+  study on prototype generation for nearest neighbor classification., IEEE
+  Transactions on Systems, Man, and Cybernetics, Part C 42~(1) (2012) 86--100.
+
+\bibitem{schapire99brief}
+R.~E. Schapire, A brief introduction to boosting, in: {IJCAI}, 1999, pp.
+  1401--1406.
+
+\bibitem{Palit12-Boost}
+I.~Palit, C.~K. Reddy, Scalable and parallel boosting with mapreduce, IEEE
+  Transactions on Knowledge and Data Engineering 24~(10) (2012) 1904--1916,
+  cited By :42.
+
+\bibitem{schapire99confidence}
+R.~E. Schapire, Y.~Singer, {Improved Boosting Algorithms Using Confidence-Rated
+  Predictions}, Machine Learning 37~(3) (1999) 297--336.
+
+\bibitem{Fer16_fuzzyBD}
+A.~Fernandez, C.~Carmona, M.~del Jesus, F.~Herrera, A view on fuzzy systems for
+  big data: Progress and opportunities, International Journal of Computational
+  Intelligence Systems 9~(1) (2016) 69--80.
+
+\bibitem{RioLBH15-Fuzzy}
+S.~del R\'io, V.~L\'opez, J.~M. Ben\'itez, F.~Herrera, A mapreduce approach to
+  address big data classification problems based on the fusion of linguistic
+  fuzzy rules., International Journal of Computational Intelligence Systems
+  8~(3) (2015) 422--437.
+
+\bibitem{MailloRTH17-kNN}
+J.~Maillo, S.~Ram\'irez-Gallego, I.~Triguero, F.~Herrera, knn-is: An iterative
+  spark-based design of the k-nearest neighbors classifier for big data.,
+  Knowledge-Based Systems 117 (2017) 3--15.
+>>>>>>> 9c92a090cef8c4de356436c52f439508260b6e77
 
 \end{thebibliography}

@@ -2,6 +2,7 @@
 \BOOKMARK [1][-]{section.2}{MapReduce as Information Process Fusion}{}% 2
 \BOOKMARK [2][-]{subsection.2.1}{MR}{section.2}% 3
 \BOOKMARK [2][-]{subsection.2.2}{Alternatives}{section.2}% 4
+<<<<<<< HEAD
 \BOOKMARK [3][-]{subsubsection.2.2.1}{Directed Acyclic Graph \(DAG\) Parallel Processing}{subsection.2.2}% 5
 \BOOKMARK [3][-]{subsubsection.2.2.2}{Bulk Synchronous Parallel \(BSP\) Processing}{subsection.2.2}% 6
 \BOOKMARK [1][-]{section.3}{Big Data Technologies for Analytics}{}% 7
@@ -16,3 +17,16 @@
 \BOOKMARK [2][-]{subsection.4.3}{Exact fusion for scalable models: distributed data and models' partition}{section.4}% 16
 \BOOKMARK [1][-]{section.5}{Practical Study on XXX}{}% 17
 \BOOKMARK [1][-]{section.6}{Concluding Remarks}{}% 18
+=======
+\BOOKMARK [1][-]{section.3}{Big Data Technologies for Analytics}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Hadoop}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Spark}{section.3}% 7
+\BOOKMARK [3][-]{subsubsection.3.2.1}{MLlib}{subsection.3.2}% 8
+\BOOKMARK [2][-]{subsection.3.3}{Flink}{section.3}% 9
+\BOOKMARK [1][-]{section.4}{Big Data Analytics on Fusion Process}{}% 10
+\BOOKMARK [2][-]{subsection.4.1}{Direct fusion of models: ensemble approach}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.2}{Approximate fusion of models: aggregation of partial systems}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.3}{Exact fusion for scalable models: distributed data and models' partition}{section.4}% 13
+\BOOKMARK [1][-]{section.5}{Practical Study on XXX}{}% 14
+\BOOKMARK [1][-]{section.6}{Concluding Remarks}{}% 15
+>>>>>>> 9c92a090cef8c4de356436c52f439508260b6e77
