@@ -1,7 +1,17 @@
 This is BibTeX, Version 0.99d (TeX Live 2015)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: fusion_MR.aux
+Case mismatch error between cite keys zaharia12 and Zaharia12
+---line 38 of file fusion_MR.aux
+ : \citation{zaharia12
+ :                    }
+I'm skipping whatever remains of this command
 The style file: elsarticle-num.bst
+I couldn't open database file sergio.bib
+---line 90 of file fusion_MR.aux
+ : \bibdata{cloud,sergio
+ :                      }
+I'm skipping whatever remains of this command
 Database file #1: cloud.bib
 I was expecting an "="---line 4 of file cloud.bib
  :  author={Kumar,M. 
@@ -36,47 +46,56 @@ I was expecting a `,' or a `}'---line 2918 of file cloud.bib
  :  author={Chen,J. and Chen,H. and Wan,X. and Zheng,G.},
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "spark"
+Warning--I didn't find a database entry for "hamstra15"
+Warning--I didn't find a database entry for "mllib15"
+Warning--I didn't find a database entry for "sparkpackages"
+Warning--I didn't find a database entry for "panda09"
+Warning--I didn't find a database entry for "flink"
+Warning--I didn't find a database entry for "flinkengine"
+Warning--I didn't find a database entry for "buitin13"
 Warning--I didn't find a database entry for "Polikar2006"
 Warning--can't use both author and editor fields in Mahout11
-You've used 23 entries,
+Warning--empty publisher in Zhao09-kMeans
+You've used 27 entries,
             2937 wiz_defined-function locations,
-            829 strings with 9581 characters,
-and the built_in function-call counts, 7802 in all, are:
-= -- 676
-> -- 336
-< -- 9
-+ -- 126
-- -- 103
-* -- 559
-:= -- 1080
-add.period$ -- 23
-call.type$ -- 23
-change.case$ -- 28
-chr.to.int$ -- 12
-cite$ -- 24
-duplicate$ -- 246
-empty$ -- 852
-format.name$ -- 122
-if$ -- 2023
+            870 strings with 10820 characters,
+and the built_in function-call counts, 8826 in all, are:
+= -- 776
+> -- 380
+< -- 7
++ -- 144
+- -- 117
+* -- 655
+:= -- 1234
+add.period$ -- 27
+call.type$ -- 27
+change.case$ -- 30
+chr.to.int$ -- 6
+cite$ -- 29
+duplicate$ -- 265
+empty$ -- 951
+format.name$ -- 140
+if$ -- 2275
 int.to.chr$ -- 0
-int.to.str$ -- 23
-missing$ -- 25
-newline$ -- 78
-num.names$ -- 23
-pop$ -- 167
+int.to.str$ -- 27
+missing$ -- 29
+newline$ -- 90
+num.names$ -- 27
+pop$ -- 177
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 484
+skip$ -- 541
 stack$ -- 0
-substring$ -- 420
-swap$ -- 59
+substring$ -- 491
+swap$ -- 58
 text.length$ -- 5
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
-warning$ -- 1
-while$ -- 50
-width$ -- 25
-write$ -- 199
-(There were 8 error messages)
+warning$ -- 2
+while$ -- 56
+width$ -- 29
+write$ -- 230
+(There were 10 error messages)

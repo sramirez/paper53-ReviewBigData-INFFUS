@@ -24,7 +24,7 @@
 
 \title{Big Data Analytics: A Tutorial on Information Process Fusion with MapReduce}
 
-\author[grx]{Sergio Ram\'irez\corref{cor1}}
+\author[grx]{Sergio Ram\'irez-Gallego\corref{cor1}}
 \ead{sramirez@decsai.ugr.es}
 
 \author[grx]{Alberto Fern\'andez}
@@ -172,20 +172,39 @@ There are two main advantages for this type of design. On the one hand, we have 
 
 In spite of the previous goodness, there is one significant problem: there is a limit in the scalability degree. It must be acknowledge that there is a strong relationship between the number of Maps and the required number of models. In other words, we cannot decrease the total running time by adding a larger number of Maps, as this may result in ``void'' functions with a data input but no output. 
 
+One final drawback that must be stressed is related to the inner concept of ensemble. Being composed of a ``large'' set of individual models, two facts must be taken into account. On the one hand, since all of them are considered for the classification step, it is hard to understand the actual reason for the labeling of the queried data. On the other hand, the robustness of the whole ensemble system somehow depends on the individual quality of its components, as well as their diversity. Both properties are not easy to hold, and impose a restriction in the building of the ensemble, for both standard and Big Data applications.
+
 \subsection{Approximate fusion of models: aggregation of partial systems}\label{subsec:submodels}
 
-Modelos que funcionan directamente. 
+As it was pointed out in the previous section, one straightforward way to design an scalable algorithm is trying to compute independent parallel tasks, i.e. to avoid data exchange between nodes. By carrying out separate computations within each Map task, complete models are obtained, all of which could work directly over the test data, as they maintain no a priori relationship among them. %Finally, the computational cost of each chunk could be so high that a fault-tolerant mechanism is mandatory. 
 
-This way, the most straightforward way to design an scalable algorithm is trying to avoid dependencies among parallel tasks. 
+To empower the recognition ability of these single models, their combination into an ensemble system has been suggested. However, we have also emphasized several some problems related to this design. In order to address or at least alleviate them, one possible solution is trying to aggregate these partial systems into a single model. 
 
-FRBCS, 
+The hitch in this case is how to design the Reduce function in order to combine the individual models coming from each Map. In order to have an insight on the possible alternatives to overcome this problem, some significant proposals given in the specialized literature will be described next.
 
-Another interesting approaches from the boosting perspective \cite{schapire99brief} were AdaBoost.PL, LogitBoost.PL and MultiBoost.PL \cite{Palit12-Boost}. These include and ensemble of ternary classifiers \cite{schapire99confidence}, or an ensemble of ensembles. The methodology in this case is exactly the same than for XXX.
+%%Corregidme si me equivoco
+A first example is the clustering procedure by means of a standard k-means \cite{Zhao09-kMeans}. Each Map process is devoted to compute the nearest samples (from its input chunk of data) to each of the $k$ centroids (initially set at random). The output key-value is the centroid ``id'' and the attributes of the nearest sample respectively. Then, each Reducer recalculates the new centroids coordinates by averaging the values of those samples given as ``list of values'' for each key (centroid). The whole procedure is then iterated in order to refine the centroids, thus improving their robustness. It must be observed the importance of the Reduce step for the global combination of the partial information computed within each Map.  
 
-IS, 
-Clustering
-kNN, 
+k-Nearest Neighbor (kNN) classifier \cite{MailloRTH17-kNN} has also some points in common with clustering, as it is based on distances among examples. In this case, the Map stage is devoted to obtain the $k$ nearest training instances to each query input. To carry out an exact computation, the whole test set should be given as input to each Map, allowing to obtain as key-value the index of the test instance and a list of the $k$ closest distances with their corresponding training class labels. Then, the Reducer only needs to find, among all $M$ sets of $k$-nearest neighbors (with $M$ the number of Maps) the one with lowest value to finally assign the output class.
 
+Prototype Reduction \cite{TrigueroPBGH15-PR} is also a significant example in this context. First, each Map process works with a different chunk of data by applying any available reduction procedure \cite{TrigueroDGH12}. Then, selected prototypes are fed to a single reducer that is devoted to eliminate redundant ones. This implies a clear fusion of data in order to obtain a final model, in this case merging similar examples. 
+
+Another interesting approaches come from the boosting perspective \cite{schapire99brief}, which are AdaBoost.PL, LogitBoost.PL and MultiBoost.PL \cite{Palit12-Boost}. These include an ensemble of ternary classifiers \cite{schapire99confidence}, or an ensemble of ensembles. Although it can be wrongly associated with those methods introduced in the previous section, these have been included in this type of methodology regarding the functionality implemented within the Reduce step. Specifically, the whole boosting procedure, i.e. $T$ iterations, is carried out within each Map, so $M$ ensemble of $T$ classifiers are obtained, being $M$ the number of maps. Then, the $T$ classifiers are arranged according to their score, i.e. the weighted error, and then emitted to the Reducers using their index as ``key'' and the model as value. Finally, each Reduce process takes all classifiers with the same index (key) and compute an average weight for this ensemble. At classification time, each ``sub-ensemble'' provides a vote for its class, whose value is exactly the aforementioned weighted average score.  
+
+Fuzzy Rule Based Classification Systems \cite{Fer16_fuzzyBD} are probably one of the clearest type of models in this category. The pioneer implementation was based on the Chi et al approach \cite{RioLBH15-Fuzzy}. Each Map task comprises a complete fuzzy learning procedure to obtain an independent Rule Base (RB). To do so, all examples from the input data chunk are iterated deriving a single rule per example, while merging those with the same antecedent and consequent. Then, rule weights (RWs) are computed based on a fuzzy confidence value from the input examples, also allowing to determine the output class. We must acknowledge that at this stage every single RB might be used for classification purposes. However, the system can be further enhanced by combining all partial models for every Map, as stated in the beginning of this section. To do so, the Map writes as key-value pair the antecedent and consequent (including class and RW) respectively. Reducers then merges those rules with the same antecedent (key) by averaging the values of the RWs for the same class consequents, and then the class with the highest RW is finally maintained. 
+
+%\cite{SongRHM15}
+
+Throughout this section we have presented a short overview on those MapReduce methods that are based on fusion of partial models. As such, they allow to reinforce the abilities of those individual systems, leading to possibly more robust approaches. However, two issues must be taken into account:
+
+\begin{enumerate}
+\item The key-value representation to link the Map and Reduce processes. It must be very carefully selected as it has a strong influence in the design of the Map function. Although the procedure is usually implemented to be independent among Maps, a common point should be given in order to allow the final combination. 
+
+\item The aggregation function in the Reducer. It has a clear dependence on the previous item, so that these must be designed as a whole to ensure a robust workflow.
+
+\end{enumerate}
+
+Both points will determine the scalability and exactness of the output system. We refer to the changes in behavior when increasing the number of Maps. Specifically, the efforts must be mostly focused on the development of the partial models, regarding the influence of the lack of data and/or whether the knowledge acquired from different subsets of the problem space are able to be accurately merged.
 
 \subsection{Exact fusion for scalable models: distributed data and models' partition}\label{subsec:exact}
 
@@ -206,7 +225,7 @@ kNN,
 This work have been partially supported by the Spanish Ministry of Science and Technology under projects TIN2014-57251-P and TIN2015-68454-R; and the Foundation BBVA project 75/2016 BigDaPTOOLS.
 %\newline
 
-%\noindent\appendix{\textbf{Bibliography}}\label{sec:biblio}
+\noindent\appendix{\textbf{Bibliography}}\label{sec:biblio}
 
 \bibliographystyle{elsarticle-num}
 \bibliography{cloud,sergio}
