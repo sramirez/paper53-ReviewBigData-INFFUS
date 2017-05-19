@@ -64,78 +64,74 @@ In order to address all these objectives, this paper is organized as follows. Fi
 
 \section{MapReduce as Information Process Fusion}\label{sec:mr}
 
+The rapid growth and influx of data from private and public sectors has popularized the notion of ``Big data \cite{Fer14}''. The surge in Big Data has led to the development of custom paradigms for distributed processing that are able to extract significant value and insight in different areas such as medical, health care, business, management and so on~\cite{Kam14,Chen14,wu14}. 
 
-\TODO
+Although focused on standard processing, distributed paradigms have also been widely utilized for fusing information~\cite{zhang14b, meng15} (ontologies and genetic data) and learning models~\cite{rio14b, rio15b} (trees and fuzzy rules). This section describes in detail these paradigms, putting more attention to the most widespread paradigm in the market: MapReduce. Furthermore, several examples on how MapReduce is applied as a fusion process are given here.
 
-\subsection{MR}\label{subsec:mr}
-
-The rapid growth and influx of data from private and public sectors has popularized the notion of ``Big data \cite{Fer14}''. The surge in Big Data has led to the development of custom paradigms and algorithms that are able to extract significant value and insight in different areas such as medical, health care, business, management and so on \cite{Kam14,Chen14,wu14}.
+\subsection{MapReduce and Other Processing Paradigms}\label{subsec:mr}
 
 %In order to provide robust and scalable solutions, new research paradigms and developmental tools have been made available. These frameworks have been designed to ease both the storage necessities and the processing of Big Data problems \cite{Fer14}. 
 
-The MapReduce execution environment \cite{Dea08} is the most common framework used in this scenario. Being a privative tool, its open source counterpart, known as Hadoop, has been traditionally used in academia research \cite{Whi15-Hadoop}. It has been designed to allow distributed computations in a transparent way for the programmer, also providing a fault-tolerant execution scheme. To take advantage of this scheme, any algorithm must be divided into two main stages: Map and Reduce. The first one is devoted to split the data for processing, whereas the second collects and aggregates the results.
+The MapReduce (MR) execution environment \cite{Dea08} is the most common paradigm used in the distributed processing scenario. Being a privative tool, its open source counterpart, known as Hadoop, has been traditionally used in academia research \cite{Whi15-Hadoop}. It has been designed to allow distributed computations in a transparent way for the programmer, also providing fault tolerance, automatic data partition and management, and automatic job/resource scheduling. To take advantage of this scheme, any algorithm must be divided into two main stages: Map and Reduce. The first one is devoted to split the data for processing, whereas the second collects and aggregates the results.
 
-Additionally, the MapReduce model is defined with respect to an essential data structure: the $<$key,value$>$ pair. The processed data, the intermediate and final results work in terms of $<$key,value$>$ pairs. To summarize its procedure, Figure \ref{fig:mapreduce} illustrates a typical MapReduce program with its \textit{Map} and \textit{Reduce} steps. %
+Additionally, the MR model is defined with respect to an essential data structure: the (key,value) pair. The processed data, the intermediate and final results work in terms of (key,value) pairs. To summarize its procedure, Figure \ref{fig:mapreduce} illustrates a typical MapReduce program with its \textit{Map} and \textit{Reduce} steps. %
 
 %\begin{comment}
 \begin{figure}[!ht]
-\centering \resizebox{0.5\textwidth}{!}{\includegraphics{mapreduce}} \caption{The MapReduce programming model.}
+\centering \resizebox{0.75\textwidth}{!}{\includegraphics{mapreduce}} \caption{The MapReduce programming model. $k$ elements represent the keys in the pairs, whereas $v$ the values.}
 \label{fig:mapreduce}
 \end{figure}
 %\end{comment}
 
-Map function first reads data and transforms them into a key-value format. Transformations in this phase may apply any sequence of operations on each record before sending the tuples across the network. Output keys are then shuffled and grouped by key value so that coincident keys are grouped together to form a list of values. Keys are then partitioned and sent to the Reducers according to some key-based scheme previously defined. Finally, the Reducers perform some kind of aggregation on the lists to eventually generate a single value for each pair. As an optimization, the reducer is also used as a combiner on the map outputs. This improvement reduces the total amount of data sent across the network by combining each word generated in the Map phase into a single pair.
+The MR scheme can be described as follows. Map function first reads data and transforms records into a key-value format. Transformations in this phase may apply any sequence of operations on each record before sending the tuples across the network. Output keys are then shuffled and grouped by key value so that coincident keys are grouped together to form a list of values. Keys are then partitioned and sent to the Reducers according to some key-based scheme previously defined. Finally, the Reducers perform some kind of aggregation on the lists to eventually generate a single value for each pair. As a further optimization, the reducer is also used as a combiner on the map outputs. This improvement reduces the total amount of data sent across the network by combining each word generated in the Map phase into a single pair.
 
 %The terms $k_i:v_j$ refer to the key and value pair that are computed within each Map process. Then, values are grouped linking them to the same key, i.e. $k_i:v_j,\ldots, v_h$, and feed to the same Reduce process. Finally, values are aggregated with any function within the Reduce process to obtain the final result of the algorithm.
 
-From another perspective, MapReduce, concretely the Reduce stage, can be seen as a information and/or model fusion process that aggregates partial results to obtain a more coarse-grained outcome. Although the Reduce phase may be skipped in some jobs in order to perform a straightforward parallelization of tasks, it is not the case in most of use cases in Big Data. 
+Apart from considering MR as a processing paradigm, this scheme (concretely, the Reduce stage) can also be seen as a fusion process that allows to blend partial models and information schemes into a final fused outcome. Fusion of models in MR is typically performed following some sort of ensemble strategy that combine multiple hypothesis through voting or attachment. Also exist other proposals that go beyond ensemble learning, and offers as outcome a single coalesced model. For example, logistic regression in Spark is composed by several subgradients that are locally computed and eventually aggregated (more examples in Section~\ref{sec:fusion}). In case of information, fusion process is more dependent from the input domain and the diversity of cases is highly diverse. Use cases for MR in the literature range from fusion of ontologies~\cite{zhang14b} to the composition of fuzzy rules~\cite{rio15b}.
 
-For example, Word Count in MapReduce comes to be one of the most widespread examples to illustrate the intrinsic fusion process performed behind this paradigm. WordCount example is intended to count the number of occurrences per word in a set of input text files. 
-In WordCount, each mapper reads a set of blocks formed by lines, and splits them into words.  It then emits a key-value pair with the word as key, and 1 as value. Afterwards, each reducer sums the scores for each word, and outputs a single key-value pair with the word and sum. 
+Word Count comes to be one of the most widespread examples to illustrate the intrinsic information fusion process behind MR. WordCount is intended to count the number of occurrences per word in a set of input text files. Each mapper reads a set of blocks formed by lines, and splits them into words. It then emits a key-value pair with the word as key, and 1 as value. Afterwards, each reducer sums the scores for each word, and outputs a single key-value pair with the word and sum. 
 
-For example, consider the string "knock knock who is there?". A single mapper would receive and split this sentence as words, and then, it would form the initial pairs as: (knock,1), (knock,1), (who,1), (is,1), (there,1) (punctuations signs are obviated).
+Consider the phrase "knock, knock, who is there?". A single mapper would receive and split this sentence as words, and then, it would form the initial pairs as: (knock,1), (knock,1), (who,1), (is,1), (there,1). In reducers, the keys are grouped together and the count values for identical keys (words) are added. In this case only one pair of similar keys `knock' would be aggregated so that the output pairs would be as follows: (knock,2), (who,1), (is,1), (there,1). As result, the user would receive the final number of hits for each word. 
 
-In reducers, the keys are grouped together and the count values for identical keys (words) are added. In this case only one pair of similar keys `knock' would be aggregated so that the output pairs would be as follows: (knock,2), (who,1), (is,1), (there,1). As result, the user would receive the final number of hits for each word. 
+Mahout's Random Forest is a good example of how ensemble learning is performed on Hadoop. Although very simple, it will serve us to illustrate the behavior of information fusion in MR. The algorithm consist of two MR phases: the first one is devoted to the development of the model (where model fusion occurs), and the second one is focused on class prediction once the model is built.
 
-
-\cite{zhang14b, rio14b, meng15, rio15b}.
+In the first phase, each Map creates several random trees (a subset of the forest) using the partitions given as input. The reduce phase simply concatenates all the trees forming the final forest of random trees. The second task replicates the forest across the nodes, and launches the mappers on the test set partitions. Mappers predict the class for each record assigned by using the final model. Finally, reducers concatenate predictions in a single file.
 
 %Despite these limitations, many Big Data technologies provide a wrapper implementation of MapReduce for end users (like Spark) due to its great popularity.
 
 
 \subsection{Alternatives}\label{subsec:altMR}
 
-Distributed processing frameworks in Big Data are responsible of ingesting, filtering, transforming, learning, querying, and exporting large amounts of data. Yet there exist many implementations for this concept, most of modern distributed frameworks follows a Single Instruction Multiple Datasets (SIMD)~\cite{sung00} scheme in order to execute the same sequence of instructions simultaneously on a distributed set of data partitions. Apart from defining the main scheme of execution, these frameworks also cope with other problems, such as: restarting failed processes, job scheduling, network synchronization, load-balancing, etc. In this section we focus on those models more relevant for current implementations in distributed computing.
+Although MR is the most popular paradigm to tackle distributed processing, there exist other modern distributed frameworks, conceived prior to the dawn of MR, that offer other alternatives for information and model fusion. Most of them follows a Single Instruction Multiple Datasets (SIMD)~\cite{sung00} scheme to execute the same sequence of instructions simultaneously on a distributed set of data partitions. In this section we focus on two paradigms (graph and bulk processing) relevant for current Big Data platforms.
 
-\subsubsection{Directed Acyclic Graph (DAG) Parallel Processing}
-All DAG-based distributed frameworks for Big Data~\cite{dennis74}, like Spark, organize their jobs by splitting them into a smaller set of atomic tasks. In this model vertices correspond with parallel tasks, whereas edges are associated with exchange of information. As shown in Figure~\ref{fig:dag}, vertices can have multiple connections between inputs and outputs, which imply that the same task can be run in different data and the same data in different partitions. Data flows are physically supported by shared memory, pipes, or disks. Instructions are duplicated and sent from the master to the slave nodes for a parallel execution. Notice that MapReduce can be deemed as an specific implementation of DAG-based processing, with only two functions as vertices. 
+\subsubsection{Directed Acyclic Graph Parallel Processing}
 
-%\begin{figure*}[htp]
-%    \centering
-%    \includegraphics[height=0.6\textheight]{../figures/dag}
-%    \caption{Direct Acyclic Graph Parallel Processing}
-%    \label{fig:dag}
-%\end{figure*}
+All distributed frameworks based on Directed Acyclic Graph (DAG)~\cite{dennis74}, like Spark, organize their jobs by splitting them into a smaller set of atomic tasks. In this model vertices correspond with parallel tasks, whereas edges are associated with exchange of information. As shown in Figure~\ref{fig:dag}, vertices can have multiple connections between inputs and outputs, which imply that the same task can be run in different data and the same data in different partitions. Data flows are physically supported by shared memory, pipes, or disks. Instructions are duplicated and sent from the master to the slave nodes for a parallel execution. Notice that MR can be deemed as an specific implementation of DAG-based processing, with only two functions as vertices. 
+
+\begin{figure*}[htp]
+    \centering
+    \includegraphics[height=0.4\textheight]{dag}
+    \caption{Direct Acyclic Graph Parallel Processing. Squares represent the tasks to process and the nodes in the graph, arrows connecting nodes represent the data flow between nodes and the vertices in the graph, dashed lines represent the dependencies between data blocks (cylinders).}
+    \label{fig:dag}
+\end{figure*}
 
 %Figure~\ref{fig:dag} depicts a DAG execution program with 4 tasks, and different partition configuration for each task. For instance, the top-most task in the graph is formed by 3 partitions. Once this task has finished, two dependent tasks (3 and 4) are started. Dependencies between partitions are not trivial as can be seen in the figure. Right-most partition in task 2 only depends on two input partitions, whereas left-most partitions has a single dependency. Finally, the input of task 4 is connected with the output of task 2 and 3. It is thus noteworthy to remark the differences between data (black dashed lines) and task dependencies (blue lines).
 
-\subsubsection{Bulk Synchronous Parallel (BSP) Processing}
+\subsubsection{Bulk Synchronous Parallel Processing}
 
-Bulk Synchronous Parallel (BSP)~\cite{vali90} systems are formed by a series of connected supersteps, implemented as directed graphs. In this scheme input data is the starting point. From here to the end, a set of Supersteps are applied on partitioned data in order to obtain the final output. As mentioned before, each Superstep correspond with an independent graph associated with a subtask to be solved. Once all compounding subtasks end, bulk synchronization of all outputs is committed. At this point vertices may send messages to the next Superstep, or receive some from previous steps, and also to modify its state and outgoing edges. 
+Bulk Synchronous Parallel (BSP)~\cite{vali90} systems are formed by a series of connected supersteps, implemented as directed graphs. In this scheme input data is the starting point. From here to the end, a set of Supersteps are applied on partitioned data in order to obtain the final output. As mentioned before, each Superstep correspond with an independent graph associated with a subtask to be solved. Once all compounding subtasks end, bulk synchronization of all outputs is committed. At this point vertices may send messages to the next Superstep, or receive some from previous steps, and also to modify its state and outgoing edges. Figure~\ref{fig:bsp} shows a toy example for BSP processing with two Supersteps and one synchronization barrier.
 
-%Figure~\ref{fig:bsp} shows a toy example for BSP processing with two Supersteps and one synchronization barrier. Subtasks in each Superstep are depicted as rectangles with variable height (task duration), and data flows as dashed lines. Synchronization barrier acts as a time proxy between stages. Although subtask cannot start before every previous subtask have finished, however, communication between stages is allowed.
-
-%\begin{figure*}[htp]
-%    \centering
-%    \includegraphics[height=0.6\textheight]{../figures/bsp}
-%    \caption{Bulk Synchronous Parallel (BSP) Processing}
-%    \label{fig:bsp}
-%\end{figure*}
+\begin{figure*}[htp]
+    \centering
+    \includegraphics[height=0.3\textheight]{bsp}
+    \caption{Bulk Synchronous Parallel Processing. Subtasks in each Superstep are depicted as rectangles with variable height (task duration), and data flows as dashed lines. Synchronization barrier acts as a time proxy between stages.}
+    \label{fig:bsp}
+\end{figure*}
 
 \section{Big Data Technologies for Analytics}\label{sec:techno}
 
 
-Nowadays, the volume of data currently managed by our storage systems have surpassed the processing capacity of traditional systems~\cite{wu14}, and this applies to data mining as well. Distributed computing has been widely used by data scientists before the advent of Big Data. Many standard and time-consuming algorithms were replaced by more rapid distributed versions that make affordable the learning process. Nevertheless, for most of current massive problems, a distributed approach becomes mandatory nowadays since no batch architecture is able to address such magnitudes.
+Nowadays, the volume of data currently managed by our storage systems have surpassed the processing capacity of traditional systems~\cite{wu14}, and this applies to data mining as well. Distributed computing has been widely used by data scientists before the advent of Big Data to boost up sequential solutions in medium-size data. Nevertheless, for most of current massive problems, a distributed approach becomes mandatory nowadays since no batch architecture is able to address such magnitudes.
 
 Beyond High Performance Computing (HPC) solutions, new large-scale processing platforms are intended to bring closer distributed processing to practitioners and experts by hiding the technical nuances derived from these environments. Novel and complex designs are required to create and maintain these platforms, which generalizes the utilization of distributed computing for standard users. 
 
@@ -143,9 +139,9 @@ As a result of the fast evolving of Big Data environment, a myriad of tools, par
 
 \subsection{Apache Hadoop}\label{subsec:hadoop}
 
-Undoubtedly Hadoop MapReduce may be deemed as the primary platform in the Big Data space. After the presentation of MapReduce by Google designers~\cite{dean04}, Hadoop MapReduce was grown by the community, and became the most used and powerful open-source implementation of MapReduce. Nowadays leading companies such as Yahoo has scaled from 100-node Hadoop clusters to 42K nodes and hundreds of petabytes~\cite{harris13} thanks to the outstanding performance of Hadoop. 
+Undoubtedly Hadoop MapReduce may be deemed as the primary platform in the Big Data space. After the presentation of MR by Google designers~\cite{dean04}, Hadoop MapReduce was grown by the community, and became the most used and powerful open-source implementation of MR. Nowadays leading companies such as Yahoo has scaled from 100-node Hadoop clusters to 42K nodes and hundreds of petabytes~\cite{harris13} thanks to the outstanding performance of Hadoop. 
 
-The main idea behind Hadoop was to create a common framework which can process large-scale data on a cluster of commodity hardware, without incurring in a high cost in developing (in contrast to HPC solutions) and execution time. Hadoop MapReduce was originally composed by two elements: the first one was a distributed storage system called Hadoop Distributed File System (HDFS), whereas the second one was a data processing framework that allows to run MapReduce-like jobs. Apart from these goals, Hadoop implements primitives to address cluster scalability, failure recovery, and resource scheduling, among others.
+The main idea behind Hadoop was to create a common framework which can process large-scale data on a cluster of commodity hardware, without incurring in a high cost in developing (in contrast to HPC solutions) and execution time. Hadoop MapReduce was originally composed by two elements: the first one was a distributed storage system called Hadoop Distributed File System (HDFS), whereas the second one was a data processing framework that allows to run MR-like jobs. Apart from these goals, Hadoop implements primitives to address cluster scalability, failure recovery, and resource scheduling, among others.
 
 But Hadoop is today more than a single technology, but a complete software stack and ecosystem formed by several top-level components that address diverse purposes. For instance, Apache Giraph for graph processing or Apache Hive for data warehousing. The common factor is that all of them rely on Hadoop, and are tightly linked to this technology. Some projects are actually Apache top-level projects~\cite{apache}, whereas others are continuously evolving or being created.%In this section, we focus on enumerating the main components of Hadoop, as well as the cutting-edge elements recently developed for the ecosystem. %All components are divided into several categories: storage, processing, high-level components. Figure~\ref{fig:hadoopeco} depicts a simplified scheme with the most popular components.
 
@@ -153,7 +149,7 @@ But Hadoop is today more than a single technology, but a complete software stack
 
 HDFS was thought to work with several storage formats. It offers several APIs to read/write registers. Some relevant APIs are: InputFormat (to read customizable registers), or RecordWriter (to write record-shaped elements). Users can also developed their own storage format, and to compress data according to their requirements. Persistence in Hadoop is mainly performed in disk. However, there are some novel advances to optimize persistence by introducing some memory usage. For instance, in Apache Hadoop version 3.0 was introduced the option of memory usage as temporary storage.
 
-Although \textbf{MapReduce}~\cite{dean04} is the native processing solution in Apache Hadoop, today it supports multiple alternatives with different processing schemes. All these solutions have in common that use a set of data nodes to run tasks on the local data blocks, and one master node (or more) to coordinate these tasks. For instance,~\textbf{Apache Tez}~\cite{tez} is a processing engine that transforms processing jobs into direct acyclic graphs (DAGs). Thanks to Tez, users can run any arbitrary complex DAG of jobs in HDFS. Tez thus efficiently solves interactive and iterative processes, like those present in machine learning processes. Its most relevant contribution is that Tez translate any complex job to a single MapReduce phase. Furthermore, it does not need to store intermediate files and reuses idle resources, which highly boost the overall performance.
+Although~\textbf{MR}~\cite{dean04} is the native processing solution in Apache Hadoop, today it supports multiple alternatives with different processing schemes. All these solutions have in common that use a set of data nodes to run tasks on the local data blocks, and one master node (or more) to coordinate these tasks. For instance,~\textbf{Apache Tez}~\cite{tez} is a processing engine that transforms processing jobs into direct acyclic graphs (DAGs). Thanks to Tez, users can run any arbitrary complex DAG of jobs in HDFS. Tez thus efficiently solves interactive and iterative processes, like those present in machine learning processes. Its most relevant contribution is that Tez translate any complex job to a single MR phase. Furthermore, it does not need to store intermediate files and reuses idle resources, which highly boost the overall performance.
 
 Hadoop MapReduce evolves to a more general component, called \textbf{Yet Another Resource Negotiator (YARN)}~\cite{yarn}, which provides extra management and maintenance services relied to other components in the past. YARN also acts as a facade for different types of distributed processing engines based on HDFS, such as Spark, Flink or Storm. In short, YARN was intended as a generic purpose system that separates the responsibilities of resource management (performed by YARN), and running management (performed by top-level applications).
 
@@ -161,7 +157,7 @@ Among the full set of advantages claimed by YARN, we can highlight its capacity 
 
 \subsubsection{Apache Mahout}
 
-Since the magnitude of learning problems has been growing exponentially, data scientists demands rapid tools that efficiently extract knowledge from large-scale data. This problem has been solved by MapReduce and other platforms by providing scalable algorithms and miscellaneous utilities in form of machine learning libraries. These libraries are compatible with the main Hadoop engine, and use as input the data stored in the storage components. 
+Since the magnitude of learning problems has been growing exponentially, data scientists demands rapid tools that efficiently extract knowledge from large-scale data. This problem has been solved by MR and other platforms by providing scalable algorithms and miscellaneous utilities in form of machine learning libraries. These libraries are compatible with the main Hadoop engine, and use as input the data stored in the storage components. 
 
 \textbf{Apache Mahout}~\cite{mahout} was the main contribution from Apache Hadoop to this field. Although it can be deemed as mainly obsolete nowadays, Mahout is considered as the first attempt to fill the gap of scalable machine learning support for Big Data. Mahout comprises several algorithms for plenty of tasks, such as: classification, clustering, pattern-mining, etc. Among a long list of golden algorithms in Mahout, we can highlight Random Forest or Na\"ive Bayes. 
 
@@ -214,15 +210,64 @@ Furthermore, Flink provides a complex fault tolerance mechanism to consistently 
 
 \section{Big Data Analytics on Fusion Process}\label{sec:fusion}
 
-\TODO
+``Synchronizing flags'' in every distributed algorithmic approach is undoubtedly the most challenging part during the design process. This issue is not an exception in the MapReduce scheme. In this particular case, developers must take two significant decisions. On the one hand, the components selected for the key-value representation in both the Map and Reduce input and outputs. On the other hand, how the list of values are aggregated in the Reduce step. 
+
+For Big Data applications in Machine Learning, these choices are of extreme importance for the behavior of the final models. In this section, we want to analyze in detail this characteristic of the MapReduce programming environment by introducing a taxonomy to organize current state-of-the-art approaches regarding how partial models from the Map task are aggregated. We will determine how this fact may also affects the actual scalability of the whole system. 
+
+Specifically, we distinguish among three different type of models. First, those that carry out a direct fusion of partial models, thus becoming and ensemble system (Section \ref{subsec:ensemble}). Second, those that create a partial model within different Maps, and combine them to obtain a single output (Section \ref{subsec:submodels}). Finally, we identify those designs which distribute both data and sub-models to iteratively build the final system (Section \ref{subsec:exact}).
 
 \subsection{Direct fusion of models: ensemble approach}\label{subsec:ensemble}
 
-\TODO
+In every MapReduce framework, the system partitions the input training data to feed the Map functions. This computational paradigm reminds of the traditional \textit{bootstrap aggregating} (bagging) approach; in this case with no replacement. Therefore, it is straightforward to obtain an ensemble-based classifier \cite{Polikar2006} by directly joining every single model obtained in a different Map task. 
+
+The premise for this type of methodologies is simple yet effective. Each Map task works independently on its chunk of data. Depending on the user's requirements, each Map function is devoted to build a one or more models. For example, a pool of 100 classifiers to be obtained from 5 Maps will result on 20 classifiers per Map, each one of them built from a 20\% of the original dataset. The ``key'' is shared by all values given as output from the Map. This fact makes the logic of the Reduce phase to stress for its simplicity. Every single classifier is directly joined into the final system. 
+
+One of the first approaches to build an ensemble of classifiers with MapReduce was the Parallel Learner for Assembling Numerous
+Ensemble Trees (PLANET) in 2009 \cite{Panda09-DT-RF}. More recent proposals include a Random Forest for Hadoop \cite{Assun13-RF-H,Wang13-RF-H}, whose implementation can be found at Mahout-MapReduce Machine Learning library \cite{Mahout11,Mahout17}.
+
+%otros modelos???
+
+\textbf{FS: \cite{Ramirez-Gallego17-mrmr} es ensemble o approximate? Sergio please encargate de tu propio modelo.}
+
+%%%%
+
+There are two main advantages for this type of design. On the one hand, we have stressed its direct synergy with the MapReduce programming model, easing the programmer implementation. On the other hand, we must refer to the degree of diversity of those models obtained from different Maps, being a crucial characteristic for the success of these types of methods \cite{Kuncheva05}. 
+
+In spite of the previous goodness, there is one significant problem: there is a limit in the scalability degree. It must be acknowledge that there is a strong relationship between the number of Maps and the required number of models. In other words, we cannot decrease the total running time by adding a larger number of Maps, as this may result in ``void'' functions with a data input but no output. 
+
+One final drawback that must be stressed is related to the inner concept of ensemble. Being composed of a ``large'' set of individual models, two facts must be taken into account. On the one hand, since all of them are considered for the classification step, it is hard to understand the actual reason for the labeling of the queried data. On the other hand, the robustness of the whole ensemble system somehow depends on the individual quality of its components, as well as their diversity. Both properties are not easy to hold, and impose a restriction in the building of the ensemble, for both standard and Big Data applications.
 
 \subsection{Approximate fusion of models: aggregation of partial systems}\label{subsec:submodels}
 
-\TODO
+As it was pointed out in the previous section, one straightforward way to design an scalable algorithm is trying to compute independent parallel tasks, i.e. to avoid data exchange between nodes. By carrying out separate computations within each Map task, complete models are obtained, all of which could work directly over the test data, as they maintain no a priori relationship among them. %Finally, the computational cost of each chunk could be so high that a fault-tolerant mechanism is mandatory. 
+
+To empower the recognition ability of these single models, their combination into an ensemble system has been suggested. However, we have also emphasized several some problems related to this design. In order to address or at least alleviate them, one possible solution is trying to aggregate these partial systems into a single model. 
+
+The hitch in this case is how to design the Reduce function in order to combine the individual models coming from each Map. In order to have an insight on the possible alternatives to overcome this problem, some significant proposals given in the specialized literature will be described next.
+
+%%Corregidme si me equivoco
+A first example is the clustering procedure by means of a standard k-means \cite{Zhao09-kMeans}. Each Map process is devoted to compute the nearest samples (from its input chunk of data) to each of the $k$ centroids (initially set at random). The output key-value is the centroid ``id'' and the attributes of the nearest sample respectively. Then, each Reducer recalculates the new centroids coordinates by averaging the values of those samples given as ``list of values'' for each key (centroid). The whole procedure is then iterated in order to refine the centroids, thus improving their robustness. It must be observed the importance of the Reduce step for the global combination of the partial information computed within each Map.  
+
+k-Nearest Neighbor (kNN) classifier \cite{MailloRTH17-kNN} has also some points in common with clustering, as it is based on distances among examples. In this case, the Map stage is devoted to obtain the $k$ nearest training instances to each query input. To carry out an exact computation, the whole test set should be given as input to each Map, allowing to obtain as key-value the index of the test instance and a list of the $k$ closest distances with their corresponding training class labels. Then, the Reducer only needs to find, among all $M$ sets of $k$-nearest neighbors (with $M$ the number of Maps) the one with lowest value to finally assign the output class.
+
+Prototype Reduction \cite{TrigueroPBGH15-PR} is also a significant example in this context. First, each Map process works with a different chunk of data by applying any available reduction procedure \cite{TrigueroDGH12}. Then, selected prototypes are fed to a single reducer that is devoted to eliminate redundant ones. This implies a clear fusion of data in order to obtain a final model, in this case merging similar examples. 
+
+Another interesting approaches come from the boosting perspective \cite{schapire99brief}, which are AdaBoost.PL, LogitBoost.PL and MultiBoost.PL \cite{Palit12-Boost}. These include an ensemble of ternary classifiers \cite{schapire99confidence}, or an ensemble of ensembles. Although it can be wrongly associated with those methods introduced in the previous section, these have been included in this type of methodology regarding the functionality implemented within the Reduce step. Specifically, the whole boosting procedure, i.e. $T$ iterations, is carried out within each Map, so $M$ ensemble of $T$ classifiers are obtained, being $M$ the number of maps. Then, the $T$ classifiers are arranged according to their score, i.e. the weighted error, and then emitted to the Reducers using their index as ``key'' and the model as value. Finally, each Reduce process takes all classifiers with the same index (key) and compute an average weight for this ensemble. At classification time, each ``sub-ensemble'' provides a vote for its class, whose value is exactly the aforementioned weighted average score.  
+
+Fuzzy Rule Based Classification Systems \cite{Fer16_fuzzyBD} are probably one of the clearest type of models in this category. The pioneer implementation was based on the Chi et al approach \cite{RioLBH15-Fuzzy}. Each Map task comprises a complete fuzzy learning procedure to obtain an independent Rule Base (RB). To do so, all examples from the input data chunk are iterated deriving a single rule per example, while merging those with the same antecedent and consequent. Then, rule weights (RWs) are computed based on a fuzzy confidence value from the input examples, also allowing to determine the output class. We must acknowledge that at this stage every single RB might be used for classification purposes. However, the system can be further enhanced by combining all partial models for every Map, as stated in the beginning of this section. To do so, the Map writes as key-value pair the antecedent and consequent (including class and RW) respectively. Reducers then merges those rules with the same antecedent (key) by averaging the values of the RWs for the same class consequents, and then the class with the highest RW is finally maintained. 
+
+%\cite{SongRHM15}
+
+Throughout this section we have presented a short overview on those MapReduce methods that are based on fusion of partial models. As such, they allow to reinforce the abilities of those individual systems, leading to possibly more robust approaches. However, two issues must be taken into account:
+
+\begin{enumerate}
+\item The key-value representation to link the Map and Reduce processes. It must be very carefully selected as it has a strong influence in the design of the Map function. Although the procedure is usually implemented to be independent among Maps, a common point should be given in order to allow the final combination. 
+
+\item The aggregation function in the Reducer. It has a clear dependence on the previous item, so that these must be designed as a whole to ensure a robust workflow.
+
+\end{enumerate}
+
+Both points will determine the scalability and exactness of the output system. We refer to the changes in behavior when increasing the number of Maps. Specifically, the efforts must be mostly focused on the development of the partial models, regarding the influence of the lack of data and/or whether the knowledge acquired from different subsets of the problem space are able to be accurately merged.
 
 \subsection{Exact fusion for scalable models: distributed data and models' partition}\label{subsec:exact}
 
