@@ -222,8 +222,7 @@ In every MapReduce framework, the system partitions the input training data to f
 
 The premise for this type of methodologies is simple yet effective. Each Map task works independently on its chunk of data. Depending on the user's requirements, each Map function is devoted to build a one or more models. For example, a pool of 100 classifiers to be obtained from 5 Maps will result on 20 classifiers per Map, each one of them built from a 20\% of the original dataset. The ``key'' is shared by all values given as output from the Map. This fact makes the logic of the Reduce phase to stress for its simplicity. Every single classifier is directly joined into the final system. 
 
-One of the first approaches to build an ensemble of classifiers with MapReduce was the Parallel Learner for Assembling Numerous
-Ensemble Trees (PLANET) in 2009 \cite{Panda09-DT-RF}. More recent proposals include a Random Forest for Hadoop \cite{Assun13-RF-H,Wang13-RF-H}, whose implementation can be found at Mahout-MapReduce Machine Learning library \cite{Mahout11,Mahout17}.
+
 
 %otros modelos???
 
@@ -271,7 +270,26 @@ Both points will determine the scalability and exactness of the output system. W
 
 \subsection{Exact fusion for scalable models: distributed data and models' partition}\label{subsec:exact}
 
-\TODO
+Given that previous scheme generates exact models derived from submodel fusion, it is presented as an ideal scenario for distributed learning. Nevertheless, this kind of fusion comes to be minority since creation and/or fusion of partial models is not possible in most of scenarios for several reasons. For instance, most of supervised methods demand to access to a large percentage of instances in the training set (usually, the whole set) in order to generalize adequately. In this case, submodels creation is no longer an option because of the underlying relationship between data partitions. 
+
+Decision trees (DT) as supervised algorithms do not support partial models in the distributed environment. They are top-down algorithms that continuously evaluate splits by using statistics sketches computed on the entire dataset. In this case, all data partitions are involved on the statistics computation in every moment, but in the rare scenario where all feature values in a partition belongs to leaves nodes. Parallelization here is then considered as a more complex task to accomplish.
+
+The main idea behind exact fusion is to utilize distributed data to make decisions regarding the construction of a single model allocated in the master node. In the case of DTs, statistics for each split can be computed using the distributed data, then the master node will decide locally which split is the best option for the current state of the model.
+
+This scheme was originally implemented in the Parallel Learner for Assembling Numerous
+Ensemble Trees (PLANET) method~\cite{Panda09-DT-RF}. In PLANET, master node controls the complete tree induction process, and launches the MR jobs that construct the nodes. It also maintains the tree model in memory, decides which split predicates will be evaluated, and eventually replicates the updated model across the nodes. Nodes to be evaluated are organized through several queues, one with nodes for MR-based evaluation and another for in-memory evaluation. Depending on the amount of instances involved in computations, nodes are pushed to one queue or the other one. We focus on MR evaluation which is more common.
+
+As tree construction proceeds, the master node retrieves nodes from the queue, and schedules MR jobs to evaluate splits. Inside the MR jobs, the statistics for splits are computed in the map side by using the instances in the data partitions. Finally, the reduce side decides which split is more convenient for the tree model. Once a MR job ends, the master nodes updates the model with the nodes and the splits predicates selected, and updates the queues with new nodes at the periphery.
+
+Notice that in this scheme, each MR job fetches the entire dataset in order to avoid determining which records are required by each node, and the extra communication that this step conveys. Instead, it performs a level-wise computation of splits so that the tree is constructed by following a breadth-first strategy. By doing so, all nodes at a given level are expanded at the same step, and every instance is part of the input to some analyzed node.
+
+PLANET project does not only offer an elegant solution for single tree induction, but it also extends previous scheme to provide powerful exact algorithms based on bagging and boosting. Concerning bagging, PLANET allows to build multiple trees by maintaining a single queue of nodes for the whole set of trees. Construction of trees is then fully parallel. In boosting, PLANET constructs weak learners sequentially as usual. Residuals are easily computed since the model is sent to every MR job in full.
+
+
+
+
+
+%Although some micro-batching can be introduced to reduce complexity, sampling data can not be allocated in independent partitions.
 
 \section{Practical Study on XXX}\label{sec:exp}
 
