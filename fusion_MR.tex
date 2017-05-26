@@ -6,7 +6,7 @@
 \usepackage{subcaption}
 %\usepackage{subfigure}
 \usepackage{comment,color}
-
+\usepackage{amssymb}
 
 \usepackage{graphicx,amsfonts,url,multirow}
 %\usepackage[cmex10]{amsmath}
@@ -222,14 +222,6 @@ In every MapReduce framework, the system partitions the input training data to f
 
 The premise for this type of methodologies is simple yet effective. Each Map task works independently on its chunk of data. Depending on the user's requirements, each Map function is devoted to build a one or more models. For example, a pool of 100 classifiers to be obtained from 5 Maps will result on 20 classifiers per Map, each one of them built from a 20\% of the original dataset. The ``key'' is shared by all values given as output from the Map. This fact makes the logic of the Reduce phase to stress for its simplicity. Every single classifier is directly joined into the final system. 
 
-
-
-%otros modelos???
-
-\textbf{FS: \cite{Ramirez-Gallego17-mrmr} es ensemble o approximate? Sergio please encargate de tu propio modelo.}
-
-%%%%
-
 There are two main advantages for this type of design. On the one hand, we have stressed its direct synergy with the MapReduce programming model, easing the programmer implementation. On the other hand, we must refer to the degree of diversity of those models obtained from different Maps, being a crucial characteristic for the success of these types of methods \cite{Kuncheva05}. 
 
 In spite of the previous goodness, there is one significant problem: there is a limit in the scalability degree. It must be acknowledge that there is a strong relationship between the number of Maps and the required number of models. In other words, we cannot decrease the total running time by adding a larger number of Maps, as this may result in ``void'' functions with a data input but no output. 
@@ -251,6 +243,9 @@ k-Nearest Neighbor (kNN) classifier \cite{MailloRTH17-kNN} has also some points 
 
 Prototype Reduction \cite{TrigueroPBGH15-PR} is also a significant example in this context. First, each Map process works with a different chunk of data by applying any available reduction procedure \cite{TrigueroDGH12}. Then, selected prototypes are fed to a single reducer that is devoted to eliminate redundant ones. This implies a clear fusion of data in order to obtain a final model, in this case merging similar examples. 
 
+The information-based feature selection framework (IFSF) proposed in~\cite{Ramirez-Gallego17-mrmr} is an example of how submodels (importance by feature) can be fused in data preprocessing. This multivariate algorithm measures redundancy and relevance between the input features and the output class in order to elect a reduced set of relevant features. As a first step in IFSF, input data is vertically split to strictly separate computations between features. Then, feature interactions are modeled by replicating the last selected feature and the class across the nodes so that the minimum amount of communication is performed. The map stage calculates the feature scores individually, and the reduce stage selects the best feature from the current set of unselected features.
+
+
 Another interesting approaches come from the boosting perspective \cite{schapire99brief}, which are AdaBoost.PL, LogitBoost.PL and MultiBoost.PL \cite{Palit12-Boost}. These include an ensemble of ternary classifiers \cite{schapire99confidence}, or an ensemble of ensembles. Although it can be wrongly associated with those methods introduced in the previous section, these have been included in this type of methodology regarding the functionality implemented within the Reduce step. Specifically, the whole boosting procedure, i.e. $T$ iterations, is carried out within each Map, so $M$ ensemble of $T$ classifiers are obtained, being $M$ the number of maps. Then, the $T$ classifiers are arranged according to their score, i.e. the weighted error, and then emitted to the Reducers using their index as ``key'' and the model as value. Finally, each Reduce process takes all classifiers with the same index (key) and compute an average weight for this ensemble. At classification time, each ``sub-ensemble'' provides a vote for its class, whose value is exactly the aforementioned weighted average score.  
 
 Fuzzy Rule Based Classification Systems \cite{Fer16_fuzzyBD} are probably one of the clearest type of models in this category. The pioneer implementation was based on the Chi et al approach \cite{RioLBH15-Fuzzy}. Each Map task comprises a complete fuzzy learning procedure to obtain an independent Rule Base (RB). To do so, all examples from the input data chunk are iterated deriving a single rule per example, while merging those with the same antecedent and consequent. Then, rule weights (RWs) are computed based on a fuzzy confidence value from the input examples, also allowing to determine the output class. We must acknowledge that at this stage every single RB might be used for classification purposes. However, the system can be further enhanced by combining all partial models for every Map, as stated in the beginning of this section. To do so, the Map writes as key-value pair the antecedent and consequent (including class and RW) respectively. Reducers then merges those rules with the same antecedent (key) by averaging the values of the RWs for the same class consequents, and then the class with the highest RW is finally maintained. 
@@ -270,24 +265,50 @@ Both points will determine the scalability and exactness of the output system. W
 
 \subsection{Exact fusion for scalable models: distributed data and models' partition}\label{subsec:exact}
 
-Given that previous scheme generates exact models derived from submodel fusion, it is presented as an ideal scenario for distributed learning. Nevertheless, this kind of fusion comes to be minority since creation and/or fusion of partial models is not possible in most of scenarios for several reasons. For instance, most of supervised methods demand to access to a large percentage of instances in the training set (usually, the whole set) in order to generalize adequately. In this case, submodels creation is no longer an option because of the underlying relationship between data partitions. 
+Previous scheme based on fusion of submodels is presented as ideal for distributed learning since submodel creation is totally parallel and the subsequent final model is deemed exact. Nevertheless, this kind of fusion is rarely feasible since creation and/or fusion of partial models is only possible in a scarce set of problems. For instance, most of supervised methods demand to access to a large percentage of instances (usually, the whole set) during the training step. In this case, submodels creation is no longer possible because of the strong dependency between data partitions. 
 
-Decision trees (DT) as supervised algorithms do not support partial models in the distributed environment. They are top-down algorithms that continuously evaluate splits by using statistics sketches computed on the entire dataset. In this case, all data partitions are involved on the statistics computation in every moment, but in the rare scenario where all feature values in a partition belongs to leaves nodes. Parallelization here is then considered as a more complex task to accomplish.
+Decision trees (DT) as supervised algorithms do not support partial construction in the distributed environment. They are top-down algorithms that continuously evaluate splits by using statistics sketches computed on the entire dataset. In this case, all data partitions are involved on the statistics computation at every step, except in the rare scenario where all feature values in a partition belongs to leaves nodes. Parallelization here is then considered as a more complex task.
 
-The main idea behind exact fusion is to utilize distributed data to make decisions regarding the construction of a single model allocated in the master node. In the case of DTs, statistics for each split can be computed using the distributed data, then the master node will decide locally which split is the best option for the current state of the model.
+One possible solution is to built \textbf{exact models} by relying on distributed data to make decisions about how to construct an unique and independent model. In the case of DTs, statistics for each split are collected from distributed data, and used in the master node. With this information, the master node would decide which split is the best option for the current state of the model.
 
 This scheme was originally implemented in the Parallel Learner for Assembling Numerous
-Ensemble Trees (PLANET) method~\cite{Panda09-DT-RF}. In PLANET, master node controls the complete tree induction process, and launches the MR jobs that construct the nodes. It also maintains the tree model in memory, decides which split predicates will be evaluated, and eventually replicates the updated model across the nodes. Nodes to be evaluated are organized through several queues, one with nodes for MR-based evaluation and another for in-memory evaluation. Depending on the amount of instances involved in computations, nodes are pushed to one queue or the other one. We focus on MR evaluation which is more common.
+Ensemble Trees (PLANET) method~\cite{Panda09-DT-RF}. In \textbf{PLANET}, master node controls the complete tree induction process, and launches the MR jobs that construct the nodes. It also maintains the tree model in memory, decides which split predicates will be evaluated, and eventually replicates the updated model across the nodes. Nodes to be evaluated are organized through several queues, one with nodes for MR-based evaluation and another for in-memory evaluation. Depending on the amount of instances involved in computations, nodes are pushed to one queue or the other. Here we focus on MR evaluation of nodes which is more common.
 
-As tree construction proceeds, the master node retrieves nodes from the queue, and schedules MR jobs to evaluate splits. Inside the MR jobs, the statistics for splits are computed in the map side by using the instances in the data partitions. Finally, the reduce side decides which split is more convenient for the tree model. Once a MR job ends, the master nodes updates the model with the nodes and the splits predicates selected, and updates the queues with new nodes at the periphery.
+As tree construction proceeds, the master node retrieves nodes from the queue, and schedules MR jobs to evaluate splits. Inside these jobs, statistics for splits are computed in the map side by using the instances in the data partitions. Finally, the reduce side decides which split is more convenient for the tree model. Once a MR job ends, the master nodes updates the model with the nodes and the splits predicates selected, and updates the queues with new nodes at the periphery.
 
 Notice that in this scheme, each MR job fetches the entire dataset in order to avoid determining which records are required by each node, and the extra communication that this step conveys. Instead, it performs a level-wise computation of splits so that the tree is constructed by following a breadth-first strategy. By doing so, all nodes at a given level are expanded at the same step, and every instance is part of the input to some analyzed node.
 
-PLANET project does not only offer an elegant solution for single tree induction, but it also extends previous scheme to provide powerful exact algorithms based on bagging and boosting. Concerning bagging, PLANET allows to build multiple trees by maintaining a single queue of nodes for the whole set of trees. Construction of trees is then fully parallel. In boosting, PLANET constructs weak learners sequentially as usual. Residuals are easily computed since the model is sent to every MR job in full.
+PLANET project does not only offer an elegant solution for single tree induction, but it also extends previous scheme to provide powerful exact algorithms based on \textbf{bagging} and \textbf{boosting} ensembles. Concerning bagging, PLANET allows to build multiple trees by maintaining a single queue of nodes for the whole set of trees. By alternating evaluation of nodes from several trees, PLANET can build the random forest in a parallel way. During boosting, PLANET constructs weak learners sequentially as usual. Here training is only parallelized at the tree level. Residuals are easily computed since the model is sent to every MR job in full.
 
+Based on PLANET, MLlib' creators~\cite{mllib15} developed two ensemble classifiers for exact fusion: one based on random forest of trees, and another based on gradient boosted trees~\cite{mllibtrees}. Standard DTs are also adopted in MLlib, however, note that they are implemented as an singular case of random forest with a single tree and the full feature set. In general, all aforementioned tree-based algorithms have incorporated several optimizations~\cite{mllibdt} with respect to PLANET, intended to boost up the tree induction process. Major features introduced are describe below:
 
+\begin{itemize}
+	\item \textit{Efficient bootstrapping}: one of the major drawbacks in PLANET is that its original design does not allow bootstrapping in bagging induction. This fact was overcome with MLlib where each record has associated a vector that indicates the number of replicas of each instance in each tree. Note that this strategy reduces the total amount of memory used as  replication is never performed.
+	\item \textit{Node tracking}: in order to keep simple its design, PLANET do not track the current position of instances in the tree as it evolves. Instead, every instance needs to be evaluated at every step by traversing the tree from the root. Although simpler, and more memory-efficient, it introduces an unfordable cost in time performance. MLlib solves this problem by assigning to each instance the node where it is currently stacked. It is clearly a better solution since cpu usage is typically a bottleneck for large-scale applications.
+	\item \textit{Enhanced group-wise training}: MLlib has improved the tree-level training scheme by extending the number of nodes to be evaluated to the memory available for statistic aggregation. This means that several trees can evaluate complete levels at the same iteration, which extremely reduces the number of passes over the dataset.
+	\item \textit{Bin-wise computation}: Instead of directly implement the best split computation strategy, MLlib proposes to categorize each feature value into a discrete bin. Bins are then exploited to easily compute aggregates for bins, and to calculate information gain. 
+	 \item \textit{Partition aggregation}: As bin-based categorization is known from the early stages, it is used to reduce the number of key-value pairs sent across the network (less I/O usage). Each partition provides the aggregates in a single array for all bins considered, which drastically simplify the scheme proposed by the original instance-wise map function.
+\end{itemize}
 
+Beyond tree learning, other scalable classifiers that generates exact models can be found in MLlib~\cite{mllib}. Linear classifiers implemented in MLlib library, such as \textbf{support vector machines}, \textbf{logistic regression} or \textbf{neural networks} rely on gradient descent optimization because of its great suitability for distributed computation. All of them share the same objective function based on error minimization: $\min_{w \in \mathbb{R}^d} \; Q(w)$, where $w$ represents a vector of weights.
 
+Without going into further details, gradient descent~\cite{hastie11} aims at finding a local minimum of a convex function by iteratively moving towards the steepest descent, which corresponds with the negative of the derivative (gradient) of the function at a given point. 
+
+For those optimization problems whose objective function $Q$ can be written as a sum of costs, a stochastic gradient descent (\textbf{SGD}) approach can be used. That is the case for supervised learning, where the loss and regularization parts can be decomposed in several single contributions by instance. This composition can be observed in the following equation:
+
+\begin{equation}
+    Q(w) := 
+    \lambda\, Reg(w) +
+    \frac1n \sum_{i=1}^n Loss(w;x_i,y_i) 
+    \label{eq:regPrimal}
+    \ .
+\end{equation}
+
+\indent where $\lambda$ represents the trade-off factor between regularization and loss, $x$ the input vector, and $y$ the output value.
+
+In stochastic gradient descent, the exact result is approximated by locally computing the gradient at example-level. In MLlib, SGD implementation computes (sub)gradients by partition (map phase) with an specific sampling fraction (for mini-batches). If no sampling is applied, we get an exact gradient descent, otherwise, SGD scheme is performed at different levels. Partial results are then aggregated/sum to obtain the gradient contribution for each iteration (reduce phase).  
+
+In recent versions, the Limited-memory Broyden-Fletcher-Goldfarb-Shanno (\textbf{L-BFGS}) method~\cite{liu89} was introduced as another alternative for optimization in MLlib. Because of great benefits in performance, it is gaining increasing popularity in MLlib compared to mini-batch gradient descent. The L-BFGS primitive locally approximates the objective function as a quadratic by constructing the Hessian matrix underneath. The Hessian matrix is approximated by previous gradient evaluations, thus solving the vertical scalability issue present in gradient descent.
 
 %Although some micro-batching can be introduced to reduce complexity, sampling data can not be allocated in independent partitions.
 
