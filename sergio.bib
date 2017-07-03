@@ -1,12 +1,23 @@
 @article{liu89,
  author = {Liu, D. C. and Nocedal, J.},
- title = {On the Limited Memory BFGS Method for Large Scale Optimization},
+ title = {On the Limited Memory {BFGS} Method for Large Scale Optimization},
  journal = {Mathematical Programming},
  volume = {45},
  number = {3},
  year = {1989},
  pages = {503--528}
 } 
+
+
+@article{baldi14,
+      author         = "Baldi, Pierre and Sadowski, Peter and Whiteson, Daniel",
+      title          = "{Searching for Exotic Particles in High-Energy Physics
+                        with Deep Learning}",
+      journal        = "Nature Communications",
+      volume         = "5",
+      year           = "2014",
+      pages          = "4308"
+}
 
 
 @book{hastie11,
@@ -20,21 +31,21 @@
     year = {2011}
 }
 
-@online{mllibguide,
+@misc{mllibguide,
   author = {Apache Spark},
   title = {{Machine Learning Library (MLlib) Guide}},
   year = 2017,
   howpublished={\url{https://spark.apache.org/docs/latest/ml-guide.html}},
 }
 
-@online{mllibtrees,
+@misc{mllibtrees,
   author = {Databricks Blog},
   title = {{Random Forests and Boosting in MLlib}},
   year = 2017,
   howpublished={\url{https://databricks.com/blog/2015/01/21/random-forests-and-boosting-in-mllib.html}},
 }
 
-@online{mllibdt,
+@misc{mllibdt,
   author = {Databricks Blog},
   title = {{Scalable Decision Trees in MLlib}},
   year = 2017,
@@ -43,7 +54,7 @@
 
 
 
-@online{sparkpackages,
+@misc{sparkpackages,
   author = {Spark Packages},
   title = {{3rd Party Spark Packages}},
   year = 2017,
@@ -53,13 +64,14 @@
 
 @INPROCEEDINGS{dean04,
     author = {Jeffrey Dean and Sanjay Ghemawat},
-    title = {{MapReduce}: simplified data processing on large clusters},
-    booktitle = {OSDI’04: PROCEEDINGS OF THE 6TH CONFERENCE ON SYMPOSIUM ON OPERATING SYSTEMS DESIGN AND IMPLEMENTATION},
+    title = {MapReduce: Simplified data processing on large clusters},
+    booktitle = {In Proceedings of the 6th Symposium on Operating Systems Design and Implementation (OSDI)},
     year = {2004},
-    publisher = {USENIX Association}
+    pages = {137--150},
+    publisher = {}
 }
 
-@online{harris13,
+@misc{harris13,
   author = {Derrick Harris},
   title = {{The history of Hadoop: From 4 nodes to the future of data}},
   year = 2013,
@@ -67,24 +79,24 @@
 }
 
 
-@online{spark,
+@misc{spark,
   author = {Apache Spark},
   title = {{Apache Spark: Lightning-fast cluster computing}},
-  year = 2016,
+  year = 2017,
   howpublished={\url{http://spark.apache.org/}},
 }
 
-@online{flink,
+@misc{flink,
   author = {Apache Flink},
   title = {{Apache Flink}},
-  year = 2016,
+  year = 2017,
   howpublished={\url{http://flink.apache.org/}},
 }
 
-@online{flinkengine,
+@misc{flinkengine,
   author = {{Apache Flink Project}},
   title = {{Peeking into Apache Flink's Engine Room}},
-  year = 2016,
+  year = 2017,
   howpublished={\url{https://flink.apache.org/news/2015/03/13/peeking-into-Apache-Flinks-Engine-Room.html
 }},
 }
@@ -103,13 +115,13 @@
 }
 
 
-@inproceedings{panda09,
-title = {PLANET: Massively Parallel Learning of Tree Ensembles with MapReduce},
-author  = {Biswanath Panda and Joshua S. Herbach and Sugato Basu and Roberto J. Bayardo},
-year  = 2009,
-booktitle = {Proceedings of the 35th International Conference on Very Large Data Bases (VLDB-2009)}
+@ARTICLE{panda09,
+    author = {Biswanath P and Joshua S. Herbach and Sugato Basu and Roberto J. Bayardo and Google Inc},
+    title = {{PLANET}: Massively parallel learning of tree ensembles with mapreduce},
+    journal = {PVLDB},
+    year = {2009},
+    pages = {1426--1437}
 }
-
 
 @article{mllib15,
   author  = {Xiangrui Meng and Joseph Bradley and Burak Yavuz and Evan Sparks and Shivaram Venkataraman and Davies Liu and Jeremy Freeman and DB Tsai and Manish Amde and Sean Owen and Doris Xin and Reynold Xin and Michael J. Franklin and Reza Zadeh and Matei Zaharia and Ameet Talwalkar},
@@ -139,7 +151,7 @@ booktitle = {Proceedings of the 35th International Conference on Very Large Data
   publisher={O'Reilly Media, Incorporated}
 }
 
-@online{mahout,
+@misc{mahout,
   author = {Apache Mahout},
   title = {{Apache Mahout}},
   year = 2017,
@@ -156,7 +168,7 @@ volume={26},
 number={1},
 pages={97-107}}
 
-@online{yarn,
+@misc{yarn,
   author = {Apache YARN},
   title = {{Apache YARN}},
   year = 2017,
@@ -164,21 +176,21 @@ pages={97-107}}
 }
 
 
-@online{hdfs,
+@misc{hdfs,
   author = {Hadoop Distributed File System},
   title = {{Hadoop Distributed File System}},
   year = 2017,
   howpublished={\url{https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsUserGuide.html}},
 }
 
-@online{apache,
+@misc{apache,
   author = {Apache Software Foundation},
   title = {{Apache Project Directory}},
   year = 2017,
   howpublished={\url{https://projects.apache.org/}},
 }
 
-@online{tez,
+@misc{tez,
   author = {Apache Tez},
   title = {{Apache Tez}},
   year = 2017,
@@ -200,12 +212,14 @@ pages={97-107}}
   url       = {http://arxiv.org/abs/1409.1458}
 }
 
-@CONFERENCE{zhang14b,
-author={Zhang, Q. and Wu, B. and Yang, J.},
-title={Parallelization of ontology construction and fusion based on MapReduce},
-journal={CCIS 2014 - Proceedings of 2014 IEEE 3rd International Conference on Cloud Computing and Intelligence Systems},
-year={2014},
-pages={439-443}
+@article{zhang14b,
+  title={Parallelization of ontology construction and fusion based on MapReduce},
+  author={Qian Zhang and Bin Wu and Juan Yang},
+  journal={2014 IEEE 3rd International Conference on Cloud Computing and Intelligence Systems},
+   volume  = {},
+  number  = {},
+  year={2014},
+  pages={439-443}
 }
 
 @ARTICLE{rio15b,
@@ -218,12 +232,14 @@ number={3},
 pages={422-437}
 }
 
-@CONFERENCE{meng15,
-author={Meng, J. and Li, R. and Zhang, J.},
-title={Parallel information fusion method for microarray data analysis},
-journal={Proceedings - 2015 IEEE International Conference on Big Data, IEEE Big Data 2015},
-year={2015},
-pages={1539-1544}
+@article{meng15,
+  title={Parallel information fusion method for microarray data analysis},
+  author={Jun Meng and Rui Li and Jing Zhang},
+  journal={2015 IEEE International Conference on Big Data (Big Data)},
+  year={2015},
+   volume  = {},
+  number  = {},
+  pages={1539-1544}
 }
 
 @article{rio14b,
@@ -236,19 +252,17 @@ pages = "112 - 137",
 year = "2014"
 }
 
-
-
-@Inbook{dennis74,
-author="Dennis, Jack B.",
-editor="Robinet, B.",
-title="First version of a data flow procedure language",
-bookTitle="Programming Symposium: Proceedings, Colloque sur la Programmation Paris, April 9--11, 1974",
-year="1974",
-publisher="Springer Berlin Heidelberg",
-address="Berlin, Heidelberg",
-pages="362--376",
-isbn="978-3-540-37819-8"
-}
+@inproceedings{dennis74,
+ author = {Dennis, J. B.},
+ title = {First Version of a Data Flow Procedure Language},
+ booktitle = {Programming Symposium, Proceedings Colloque Sur La Programmation},
+ year = {1974},
+ isbn = {3-540-06859-7},
+ pages = {362--376},
+ numpages = {15},
+ publisher = {Springer-Verlag},
+ address = {London, UK},
+} 
 
 @MISC{sung00,
     author = {Michael Sung},

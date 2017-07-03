@@ -78,7 +78,7 @@ Additionally, the MR model is defined with respect to an essential data structur
 
 %\begin{comment}
 \begin{figure}[!ht]
-\centering \resizebox{0.75\textwidth}{!}{\includegraphics{mapreduce}} \caption{The MapReduce programming model. $k$ elements represent the keys in the pairs, whereas $v$ the values.}
+\centering \resizebox{0.5\textwidth}{!}{\includegraphics{mapreduce}} \caption{The MapReduce programming model. $k$ elements represent the keys in the pairs, whereas $v$ the values.}
 \label{fig:mapreduce}
 \end{figure}
 %\end{comment}
@@ -110,7 +110,7 @@ All distributed frameworks based on Directed Acyclic Graph (DAG)~\cite{dennis74}
 
 \begin{figure*}[htp]
     \centering
-    \includegraphics[height=0.4\textheight]{dag}
+    \includegraphics[width=0.4\textwidth]{dag}
     \caption{Direct Acyclic Graph Parallel Processing. Squares represent the tasks to process and the nodes in the graph, arrows connecting nodes represent the data flow between nodes and the vertices in the graph, dashed lines represent the dependencies between data blocks (cylinders).}
     \label{fig:dag}
 \end{figure*}
@@ -123,7 +123,7 @@ Bulk Synchronous Parallel (BSP)~\cite{vali90} systems are formed by a series of 
 
 \begin{figure*}[htp]
     \centering
-    \includegraphics[height=0.3\textheight]{bsp}
+    \includegraphics[width=0.5\textwidth]{bsp}
     \caption{Bulk Synchronous Parallel Processing. Subtasks in each Superstep are depicted as rectangles with variable height (task duration), and data flows as dashed lines. Synchronization barrier acts as a time proxy between stages.}
     \label{fig:bsp}
 \end{figure*}
@@ -237,7 +237,7 @@ To empower the recognition ability of these single models, their combination int
 The hitch in this case is how to design the Reduce function in order to combine the individual models coming from each Map. In order to have an insight on the possible alternatives to overcome this problem, some significant proposals given in the specialized literature will be described next.
 
 %%Corregidme si me equivoco
-A first example is the clustering procedure by means of a standard k-means \cite{Zhao09-kMeans}. Each Map process is devoted to compute the nearest samples (from its input chunk of data) to each of the $k$ centroids (initially set at random). The output key-value is the centroid ``id'' and the attributes of the nearest sample respectively. Then, each Reducer recalculates the new centroids coordinates by averaging the values of those samples given as ``list of values'' for each key (centroid). The whole procedure is then iterated in order to refine the centroids, thus improving their robustness. It must be observed the importance of the Reduce step for the global combination of the partial information computed within each Map.  
+A first example is the clustering procedure by means of a standard k-Means \cite{Zhao09-kMeans}. Each Map process is devoted to compute the nearest samples (from its input chunk of data) to each of the $k$ centroids (initially set at random). The output key-value is the centroid ``id'' and the attributes of the nearest sample respectively. Then, each Reducer recalculates the new centroids coordinates by averaging the values of those samples given as ``list of values'' for each key (centroid). The whole procedure is then iterated in order to refine the centroids, thus improving their robustness. It must be observed the importance of the Reduce step for the global combination of the partial information computed within each Map.  
 
 k-Nearest Neighbor (kNN) classifier \cite{MailloRTH17-kNN} has also some points in common with clustering, as it is based on distances among examples. In this case, the Map stage is devoted to obtain the $k$ nearest training instances to each query input. To carry out an exact computation, the whole test set should be given as input to each Map, allowing to obtain as key-value the index of the test instance and a list of the $k$ closest distances with their corresponding training class labels. Then, the Reducer only needs to find, among all $M$ sets of $k$-nearest neighbors (with $M$ the number of Maps) the one with lowest value to finally assign the output class.
 
@@ -312,11 +312,56 @@ In recent versions, the Limited-memory Broyden-Fletcher-Goldfarb-Shanno (\textbf
 
 %Although some micro-batching can be introduced to reduce complexity, sampling data can not be allocated in independent partitions.
 
-\section{Practical Study on XXX}\label{sec:exp}
 
-\TODO
+%%% Taxonomy 
+
+\section{Practical Study on Scalability}\label{sec:exp}
+
+In this section we present a brief experimental study on the scalability of the different fusion proposals previously described. We begin by presenting the large-scale dataset used as reference (Section~\ref{subsec:datasets}). Then, the random forest version for Mahout-Hadoop will serve us to illustrate the most elementary fusion process, the direct fuser (Section~\ref{subsec:rfmahout}). Finally, Section~\ref{subsec:rfspark} provides outcomes for approximate and exact fusion alternatives, represented by Spark's k-Means and Random Forest.
+
+\subsection{Higgs Boson Data}
+\label{subsec:datasets}
+
+Higgs boson dataset~\cite{baldi14} has been elected to measure the performance impact of distinct fusion schemes on standard learning methods. This dataset was upload to the UCI repository in 2014~\cite{Lichman:2013} as a result of Higgs's discovery in 2012, and the complex experiments performed at the Large Hadron Collider at CERN. %Beyond the exciting discovery, physicists have just started the long and difficult path to the characterization and measurement of this particles.
+
+In this dataset, particle data generated by Monte Carlo simulations aim at distinguishing between a signal process generated by Higgs bosons, and a background process with the identical decay products but distinct kinematic attributes (binary problem). Although the experts has confirmed its decay into two tau particles, the signals are rather small and buried in background noise. 
+
+From the total of 28 numerical features, the first 21 are kinematic feature measured by the particle sensors in the accelerator. The last features are high-level functions derived by physicists to improve the discriminate power of features. On the other side, 11 millions of instances were collected to train complex deep neural network models in the preliminary attempts.
+
+\subsection{Direct fusion: Random Forest on Mahout-Hadoop}
+\label{subsec:rfmahout}
 
 
+
+Experiments have been run in a 12-node cluster and an extra master node with the following features per node: 6 CPU cores (Intel(R) Core(TM) i7-4930K CPU at 3.40GHz), 64 GB RAM, 2TB HDD, Gigabit Ethernet network connection. Hadoop 2.6.0-cdh5.10.0 and Mahout 0.9 were installed in all the nodes. 4 GB was set as maximum for memory in map and reduce processes.
+
+
+\subsection{Approximate and Exact fusion: k-Means and Random Forest on ML-Spark}
+\label{subsec:rfspark}
+
+As stated before, Spark is mainly formed by approximate and exact fusion-based machine learning algorithms. Concretely, k-Means and Random Forest are two illustrative examples in MLlib of approximate and exact algorithms, respectively. Scalability experiments on k-Means and Random have been performed in order to evaluate their scalability. The same cluster topology used in Section~\ref{subsec:rfmahout} is adopted for ML-Spark. In this case, Apache Spark 1.6.2 is used as reference platform, and the dataset is partitioned into 216 partitions (= number of cores).
+
+Notice that scalability evaluation implemented here is slightly different than used in Hadoop. In contrast to manual partitioning in Hadoop, Spark allows users to specify the amount of executor cores available for each program running. This feature is much more interesting to test scalability performance since it avoids the costly partitioning operation to be repeated for each configuration.
+
+In this experiments, the amount of CPU cores available is varied from 1 to 200, keeping the original data distribution scheme fixed. Figure~\ref{fig:kmeans-spark} depicts how the k-Means implementation scales-up by augmenting CPU power. From 1 to 120, the method shows an expected downtrend as more resources are provided, being the minimum stacked at 120 ($9.18$). The remaining values follows a smooth uptrend until 200. 
+
+In order to understand why no real scale-up happens from 120 cores, we must cite the Spark's authors suggestion~\cite{mllibguide} for partition tuning, which recommends to prepare 2-4x partitions per core. A partition rate below 2x implies that some CPU cores may become idle as the granularity of distributed processing is rather small. Imagine the 1x case where the most rapid thread must wait the slowest one. A rate above 4x implies a oversized granularity where time usage is mainly dominated by startup overheads and short processes. It seems than in our study the closest value to a 2x partition rate (120-cores) represents the best option. 
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{kmeans-spark}
+    \caption{Average time (3x) obtained for Spark's k-Means. Label values are displayed close to the points. Y-axis in 10-log scale.}
+    \label{fig:kmeans-spark}
+\end{figure}
+
+Figure~\ref{fig:rf-spark} performs the same study for Random Forest. The results shows a trend similar to that in the above figure, and where the same conclusions can be stated. The global minimum can also be found in 120 cores. The only noticeable difference is the lower time cost held by Random Forest compared with the clustering technique.
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{rf-spark}
+    \caption{Average time (3x) obtained for Spark's Random Forest. Label values are displayed close to the points. Y-axis in 10-log scale.}
+    \label{fig:rf-spark}
+\end{figure}
 
 \section{Concluding Remarks}\label{sec:conclusions}
 
