@@ -317,7 +317,9 @@ In recent versions, the Limited-memory Broyden-Fletcher-Goldfarb-Shanno (\textbf
 
 \section{Practical Study on Scalability}\label{sec:exp}
 
-In this section we present a brief experimental study on the scalability of the different fusion proposals previously described. We begin by presenting the large-scale dataset used as reference (Section~\ref{subsec:datasets}). Then, the random forest version for Mahout-Hadoop will serve us to illustrate the most elementary fusion process, the direct fuser (Section~\ref{subsec:rfmahout}). Finally, Section~\ref{subsec:rfspark} provides outcomes for approximate and exact fusion alternatives, represented by Spark's k-Means and Random Forest.
+In this section we present a brief experimental study on the scalability of different fusion proposals. We start by presenting Higgs dataset, the large-scale dataset used as reference in our experiments (Section~\ref{subsec:datasets}). Then, the random forest version for Mahout-Hadoop will serve us to illustrate the most elementary fusion process: the direct fusion (Section~\ref{subsec:rfmahout}). Finally, Section~\ref{subsec:rfspark} provides outcomes for approximate and exact fusion alternatives, represented by Spark's k-Means and Random Forest.
+
+Experiments have been launched in a 12-node cluster and an extra master node with the following features per node: 6 CPU cores (Intel(R) Core(TM) i7-4930K CPU at 3.40GHz), 64 GB RAM, 2TB HDD, Gigabit Ethernet network connection. Hadoop 2.6.0-cdh5.10.0 and Mahout 0.9 were installed in all the nodes. 4 GB was set as maximum for memory in map and reduce processes.
 
 \subsection{Higgs Boson Data}
 \label{subsec:datasets}
@@ -331,26 +333,33 @@ From the total of 28 numerical features, the first 21 are kinematic feature meas
 \subsection{Direct fusion: Random Forest on Mahout-Hadoop}
 \label{subsec:rfmahout}
 
+In order to test the scalability behavior of Mahout's Random Forest (200 trees), we have taken runtime measurements for different map configurations, from 1 mapper to 120. Figure~\ref{fig:rf-mahout} depicts how time performance varies as resources augment.
 
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{rf-mahout}
+    \caption{Average time (3x) obtained by Mahout's Random Forest (200 trees) varying the number of mappers. Label values are displayed close to the points.}
+    \label{fig:rf-mahout}
+\end{figure}
 
-Experiments have been run in a 12-node cluster and an extra master node with the following features per node: 6 CPU cores (Intel(R) Core(TM) i7-4930K CPU at 3.40GHz), 64 GB RAM, 2TB HDD, Gigabit Ethernet network connection. Hadoop 2.6.0-cdh5.10.0 and Mahout 0.9 were installed in all the nodes. 4 GB was set as maximum for memory in map and reduce processes.
-
+The plot depicts an expected downtrend as more CPU power is available. However, some rare spikes are present around the 100-cores value. It seems that Mahout's Random Forest prefers an amount of cores divisible between the number of trees, in this case, only 100 and 200. On the other hand, the algorithm shows some rare deficiencies when dealing with values close to 100, e.g.: 80 and 120. These time consuming processes occur during the tree construction in the map phase. This strange behavior may be explained by some design failures derived from the preliminary design implemented in Mahout's Random Forest.
 
 \subsection{Approximate and Exact fusion: k-Means and Random Forest on ML-Spark}
 \label{subsec:rfspark}
 
-As stated before, Spark is mainly formed by approximate and exact fusion-based machine learning algorithms. Concretely, k-Means and Random Forest are two illustrative examples in MLlib of approximate and exact algorithms, respectively. Scalability experiments on k-Means and Random have been performed in order to evaluate their scalability. The same cluster topology used in Section~\ref{subsec:rfmahout} is adopted for ML-Spark. In this case, Apache Spark 1.6.2 is used as reference platform, and the dataset is partitioned into 216 partitions (= number of cores).
+As stated before, Spark is mainly formed by approximate and exact fusion-based machine learning algorithms. Concretely, k-Means and Random Forest are two illustrative examples in MLlib of approximate and exact algorithms, respectively. Scalability experiments on k-Means and Random have been performed in order to assess their scalability power. For these experiments, Apache Spark 1.6.2 is used as reference platform, and the dataset is previously partitioned into 216 partitions (= number of cores). Default parameter values are set for both algorithms.
 
-Notice that scalability evaluation implemented here is slightly different than used in Hadoop. In contrast to manual partitioning in Hadoop, Spark allows users to specify the amount of executor cores available for each program running. This feature is much more interesting to test scalability performance since it avoids the costly partitioning operation to be repeated for each configuration.
+Notice that scalability evaluation implemented here is slightly different than used in Hadoop. In contrast to manual partitioning in Hadoop, Spark allows users to specify the amount of executor cores available for each program running. This feature is much more interesting since it allows to tune resource allocation without altering the original partitioning scheme.
 
-In this experiments, the amount of CPU cores available is varied from 1 to 200, keeping the original data distribution scheme fixed. Figure~\ref{fig:kmeans-spark} depicts how the k-Means implementation scales-up by augmenting CPU power. From 1 to 120, the method shows an expected downtrend as more resources are provided, being the minimum stacked at 120 ($9.18$). The remaining values follows a smooth uptrend until 200. 
+%Here, the amount of CPU cores is varied from 1 to 200, keeping the data distribution scheme fixed. 
+Figure~\ref{fig:kmeans-spark} depicts how the k-Means implementation scales-up by augmenting CPU power. From 1 to 120, the method shows an expected downtrend as more resources are provided, being the minimum stacked at 120 ($9.18$). The remaining values follow a smooth uptrend until 200 cores. 
 
-In order to understand why no real scale-up happens from 120 cores, we must cite the Spark's authors suggestion~\cite{mllibguide} for partition tuning, which recommends to prepare 2-4x partitions per core. A partition rate below 2x implies that some CPU cores may become idle as the granularity of distributed processing is rather small. Imagine the 1x case where the most rapid thread must wait the slowest one. A rate above 4x implies a oversized granularity where time usage is mainly dominated by startup overheads and short processes. It seems than in our study the closest value to a 2x partition rate (120-cores) represents the best option. 
+In order to understand why no real scale-up happens from 120 cores, we must cite the Spark's authors suggestion~\cite{mllibguide} for partition tuning, which recommends to prepare 2-4x partitions per core. A partition rate below 2x implies that some CPU cores may become idle as the processing granularity becomes rather small. Imagine the 1x case where the most rapid thread must wait the slowest one. A rate above 4x implies a oversized granularity where time usage is mainly dominated by startup overheads and short processes. In our study the closest value to a 2x partition rate (120-cores) is ranked as the best option. 
 
 \begin{figure}[htp]
     \centering
     \includegraphics[width=0.5\textwidth]{kmeans-spark}
-    \caption{Average time (3x) obtained for Spark's k-Means. Label values are displayed close to the points. Y-axis in 10-log scale.}
+    \caption{Average time (3x) obtained by Spark's k-Means varying the number of cores. Label values are displayed close to the points. Y-axis in 10-log scale.}
     \label{fig:kmeans-spark}
 \end{figure}
 
@@ -359,7 +368,7 @@ Figure~\ref{fig:rf-spark} performs the same study for Random Forest. The results
 \begin{figure}[htp]
     \centering
     \includegraphics[width=0.5\textwidth]{rf-spark}
-    \caption{Average time (3x) obtained for Spark's Random Forest. Label values are displayed close to the points. Y-axis in 10-log scale.}
+    \caption{Average time (3x) obtained by Spark's Random Forest varying the number of cores. Label values are displayed close to the points. Y-axis in 10-log scale.}
     \label{fig:rf-spark}
 \end{figure}
 
