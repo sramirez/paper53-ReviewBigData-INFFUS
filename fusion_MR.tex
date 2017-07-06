@@ -60,7 +60,18 @@ Big Data Analytics, MapReduce, Information Fusion, Spark, Machine Learning
 
 \section{Introduction}\label{sec:intro}
 
-\TODO
+
+Big Data analytics is nowadays one of the most significant and profitable areas of study \cite{Chen12-BI-BD, Min13-BDAnalBook, Kam14, Fer14}. One of the main reasons of this success is related with the Internet-of-Things (IoT) and the myriad of data from different sources that can be collected and processed \cite{Fuqaha15-IoT, Xu14-IoT}. In this sense, corporations that are able to extract valuable knowledge from large volumes of data in a reasonable time, may obtain significant advantages over their competitors \cite{Lar16-BI,Choi17-BDAnal}. Researchers from academia are also aware of the interest in developing robust and accurate models for data mining in Big Data applications \cite{Wu14-DMBD,Wix14-BDAcad}. There is a clear growing rate in the number of research studies on the topic \cite{Abb16-BDIS}, and the trend is not expected to change in the following years.
+
+However, even years after the boom of Big Data there is still a misleading definition for the concept itself \cite{Gan15-BDhype}. We must stress that the topic of Big Data is strongly linked with the scalability issue \cite{Hu14-ScalBDAnal}. Those models developed in this context must be able to adapt dynamically the the data growth, as well as being fault tolerant to be reliable. In order to fulfill these requirements, a change in the traditional technology and framework for carrying out the learning process is mandatory. 
+
+MapReduce has established as a de-facto solution that comprises all the previous capabilities \cite{Dea08,Dean10,Lee11-MR}. It is basically an execution environment which lays over a distributed file system \cite{Shvachko10-HDFS}. By means of two simple functions, Map and Reduce, any implementation can be automatically parallelized in a transparent way for the programmer, also supporting a fault-tolerant scheme. The Map function is devoted to divide the computation into different subparts, each one related to a partial set of the data. Then, the Reduce function needs to aggregate the local outputs into a single final model. 
+
+Whereas the procedure to be included in the Map task is, most times, straightforward to determine, the hitch comes when deciding how to carry out the models' fusion within the Reduce task. At this point, the design depends on many factors, namely whether the submodels are different and independent among them, or they have a nexus for being able to join them directly. 
+
+In this paper, we aim at analyzing the different alternatives on fusion process for Big Data models under MapReduce. To do so, we propose a brief taxonomy distinguishing three types of approaches. First, those that carry out a direct fusion of partial models, i.e. an ensemble system. Second, those that learn a sub-model in each Map, and then aggregate them into a single one. Finally, we stress those design that carry out a global distribution of both data and sub-models (the prior ones just considered data division), and iteratively build the final system.
+
+In order to provide a better understanding of each type of implementation, we will present some examples of these algorithms from both well-known Machine Learning libraries such as Mahout \cite{Owe11,Mahout17,Mahout16-Book} (Apache Hadoop \cite{Lam11,Whi15-Hadoop}) and MLlib \cite{MLlib} (Apache Spark \cite{Zaharia10,zaharia12}), and in the latest research works. Additionally, we will carry out a practical study on scalability for each of the different fusion proposals with the sake of contrasting how time and accuracy performance vary as resources increase. 
 
 In order to address all these objectives, this paper is organized as follows. First, Section \ref{sec:mr} presents an introduction on the MapReduce programming framework, also stressing some alternatives for Big Data processing. Section \ref{sec:techno} includes an overview on those technologies currently available to address Big Data problems from a distributed perspective. Section \ref{sec:fusion} presents the core of this paper, analyzing the different design options for developing Big Data analytics algorithms regarding how the partial data and models are aggregated. Then, we show a case study in Section \ref{sec:exp} to contrast the capabilities regarding scalability of the different approaches previously introduced. Finally, Section \ref{sec:conclusions} summarizes and concludes this paper.
 
@@ -337,7 +348,7 @@ From the total of 28 numerical features, the first 21 are kinematic feature meas
 
 In order to test the scalability behavior of Mahout's Random Forest (200 trees), we have taken runtime measurements for different map configurations, from 1 mapper to 120. Figure~\ref{fig:rf-mahout} depicts how time performance varies as resources augment.
 
-\begin{figure}[htp]
+\begin{figure}[!htp]
     \centering
     \includegraphics[width=0.5\textwidth]{rf-mahout}
     \caption{Average time (3x) obtained by Mahout's Random Forest (200 trees) varying the number of mappers. Label values are displayed close to the points.}
@@ -348,7 +359,7 @@ The plot depicts an expected downtrend as more CPU power is available. However, 
 
 Concerning accuracy, an increment of map partitions is followed by a drop on this measure as reflected in Figure~\ref{fig:rf-mahout-pred}. This is due to subtrees usually have a narrower view of input space when more map partitions are present, or in other words, trees need to learn with a less instances.
 
-\begin{figure}[htp]
+\begin{figure}[!htp]
     \centering
     \includegraphics[width=0.5\textwidth]{rf-mahout-acc}
     \caption{Average accuracy (5-fold) obtained by Mahout's Random Forest (200 trees) varying the number of mappers. Label values are displayed close to the points.}
@@ -365,18 +376,20 @@ Notice that scalability evaluation implemented here is slightly different than u
 %Here, the amount of CPU cores is varied from 1 to 200, keeping the data distribution scheme fixed. 
 Figure~\ref{fig:kmeans-spark} depicts how the k-Means implementation scales-up by augmenting CPU power. From 1 to 120, the method shows an expected downtrend as more resources are provided, being the minimum stacked at 120 ($9.18$). The remaining values follow a smooth uptrend until 200 cores. 
 
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[width=0.5\textwidth]{kmeans-spark}
+	\caption{Average time (3x) obtained by Spark's k-Means varying the number of cores. Label values are displayed close to the points. Y-axis in 10-log scale.}
+	\label{fig:kmeans-spark}
+\end{figure}
+
 In order to understand why no real scale-up happens from 120 cores, we must cite the Spark's authors suggestion~\cite{mllibguide} for partition tuning, which recommends to prepare 2-4x partitions per core. A partition rate below 2x implies that some CPU cores may become idle as the processing granularity becomes rather small. Imagine the 1x case where the most rapid thread must wait the slowest one. A rate above 4x implies a oversized granularity where time usage is mainly dominated by startup overheads and short processes. In our study the closest value to a 2x partition rate (120-cores) is ranked as the best option. 
 
-\begin{figure}[htp]
-    \centering
-    \includegraphics[width=0.5\textwidth]{kmeans-spark}
-    \caption{Average time (3x) obtained by Spark's k-Means varying the number of cores. Label values are displayed close to the points. Y-axis in 10-log scale.}
-    \label{fig:kmeans-spark}
-\end{figure}
+
 
 Figure~\ref{fig:rf-spark} performs the same study for Random Forest. The results shows a trend similar to that in the above figure, and where the same conclusions can be stated. The global minimum can also be found in 120 cores. The only noticeable difference is the lower time cost held by Random Forest compared with the clustering technique.
 
-\begin{figure}[htp]
+\begin{figure}[!htp]
     \centering
     \includegraphics[width=0.5\textwidth]{rf-spark}
     \caption{Average time (3x) obtained by Spark's Random Forest varying the number of cores. Label values are displayed close to the points. Y-axis in 10-log scale.}
